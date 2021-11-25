@@ -3,76 +3,57 @@ import db from '../models/index.js'
 import _ from 'lodash'
 import common from '../middleware/common.mjs'
 import authToken from '../middleware/token.mjs'
-import { isVerified, auth, Email } from '../middleware/constants.mjs'
+import { httpError } from '../common/httpError.mjs'
+import { isVerified, auth, Email } from '../common/constants.mjs'
 import jwtDecode from 'jwt-decode'
 
 const { getAuthToken, getToken } = authToken
 const { sendEmail } = common
-const { users, userRoles, sequelize } = db
+const { user, sequelize } = db
 
 async function registration(req, res) {
-  const { firstName, lastName, email, password } = req.body
+  const { firstName, lastName, email, password, roleId } = req.body
   let hashPassword
   const t = await sequelize.transaction()
   try {
-    const checker = await users.findOne({ where: { email: email } })
+    const checker = await user.findOne({ where: { email: email } })
     if (_.isEmpty(checker)) {
-      try {
-        hashPassword = await bcrypt.hash(password, process.env.SALT)
-      } catch (error) {
-        return res.error({ error })
-      }
-      try {
-        const user = await users.create(
-          {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            password: hashPassword
-          },
-          { transaction: t }
-        )
-        const role = await userRoles.create(
-          { userId: user.id, roleId: 2 },
-          { transaction: t }
-        )
-        if (!_.isEmpty(role) && !_.isEmpty(user)) {
-          const token = getAuthToken(email)
-          const to = email
-          const subject = 'Verify Your Email'
-          const html = ' Hello '
-            .concat(` , <br /></br > We receive your request for Signup. 
+      hashPassword = await bcrypt.hash(password, process.env.SALT)
+      const record = await user.create(
+        {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: hashPassword
+        },
+        { transaction: t }
+      )
+      const role = await record.addRoles([roleId], { transaction: t })
+      if (!_.isEmpty(role) && !_.isEmpty(record)) {
+        const token = getAuthToken(email)
+        const to = email
+        const subject = 'Verify Your Email'
+        const html = ' Hello '
+          .concat(` , <br /></br > We receive your request for Signup. 
                     <br /> Here is the link for Verification :
                     <a href="http://localhost:400/verify?token=${token}"> 
                     Click here to verify your email </a> <br />
                     This link is expire after 15 minutes<br /> Best Regards.`)
-          try {
-            const abc = await sendEmail(to, subject, html)
-            await t.commit()
-            const status = 201
-            const message =
-              'Email is Successfully send kindly verify your email with in 15 minutes '
-            const data = null
-            return res.status(200).success({ status, message, data })
-          } catch (error) {
-            await t.rollback()
-            return res.error({ error })
-          }
-        } else {
-          await t.rollback()
-          const error = new Error('An Error Occur While Registering New User')
-          return res.fail({ error })
-        }
-      } catch (error) {
+        await sendEmail(to, subject, html)
+        await t.commit()
+        const status = 201
+        const message =
+          'Email is Successfully send kindly verify your email with in 15 minutes '
+        return res.status(200).success({ status, message })
+      } else {
         await t.rollback()
-        return res.error({ error })
+        return httpError('An Error Occur While Registering New User')
       }
     } else {
-      const error = new Error('Email Is already Exist!')
-      return res.fail({ error })
+      return httpError('Email Is already Exist!')
     }
   } catch (error) {
-    return res.error({ error })
+    return httpError(error.message)
   }
 }
 
@@ -94,7 +75,7 @@ async function login(req, res) {
   const { email, password } = req.body
   try {
     let hashPassword = await bcrypt.hash(password, process.env.SALT)
-    const verification = await users.findOne({
+    const verification = await user.findOne({
       where: { email: email, password: hashPassword }
     })
     if (!verification) return res.fail({ error: auth.inValid })
@@ -137,15 +118,14 @@ async function resetPassword(req, res, next) {
   const decode = jwtDecode(token)
   try {
     const hashPassword = await bcrypt.hash(password, process.env.SALT)
-    const verify = await users.update(
+    const verify = await user.update(
       { password: hashPassword },
       { where: { email: decode.email } }
     )
-    if (_.isEmpty(verify))
-      return res.fail({ error: { message: auth.errorReset } })
+    if (_.isEmpty(verify)) return httpError(auth.errorReset)
     return res.success({ status: 200, message: auth.messageReset, data: null })
   } catch (err) {
-    return res.error({ error: { message: auth.errorReset } })
+    return httpError(auth.errorReset)
   }
 }
 
@@ -165,7 +145,7 @@ async function resendEmailLink(req, res, next) {
       .status(200)
       .success({ status: 200, message: auth.messageResend, data: null })
   } catch (error) {
-    return res.fail({ error: { message: auth.messageForgotPassword } })
+    return httpError(auth.messageForgotPassword)
   }
 }
 

@@ -1,15 +1,15 @@
 'use strict'
 const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
-  class users extends Model {
+  class user extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ roles }) {
+    static associate({ role }) {
       // define association here
-      this.belongsToMany(roles, { through: 'userRoles', foreignKey: 'userId' })
+      this.belongsToMany(role, { through: 'userRoles', foreignKey: 'userId' })
     }
     toJSON() {
       return {
@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   }
-  users.init(
+  user.init(
     {
       firstName: DataTypes.STRING,
       lastName: DataTypes.STRING,
@@ -28,15 +28,15 @@ module.exports = (sequelize, DataTypes) => {
       password: DataTypes.STRING,
       isVerified: {
         type: DataTypes.ENUM,
-        values: ['no', 'email', 'admin'],
+        values: ['no', 'email'],
         defaultValue: 'no'
       },
       isDeleted: { type: DataTypes.BOOLEAN, defaultValue: false }
     },
     {
       sequelize,
-      modelName: 'users'
+      modelName: 'user'
     }
   )
-  return users
+  return user
 }

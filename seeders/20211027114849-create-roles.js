@@ -14,7 +14,12 @@ module.exports = {
           updatedAt: new Date()
         },
         {
-          title: 'default',
+          title: 'tourist',
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        {
+          title: 'agency',
           createdAt: new Date(),
           updatedAt: new Date()
         }

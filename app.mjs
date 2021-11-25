@@ -9,7 +9,7 @@ import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 import { JSend } from 'jsend-express'
 import 'express-async-errors'
-
+import error from './middleware/error.mjs'
 import setRoutes from './routes/index.mjs'
 
 const app = express()
@@ -34,15 +34,6 @@ app.use(function (req, res, next) {
 })
 
 // error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  // res.locals.message = err.message
-  // res.locals.error = req.app.get('env') === 'development' ? err : {}
-
-  // render the error page
-  res.status(500).error('error')
-
-  //res.render('error')
-})
+error(app)
 
 export default app

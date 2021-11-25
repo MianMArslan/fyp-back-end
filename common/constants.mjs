@@ -1,7 +1,6 @@
 export const isVerified = Object.freeze({
   NO: 'no',
-  EMAIL: 'email',
-  ADMIN: 'admin'
+  EMAIL: 'email'
 })
 export const user = {
   addingRole: 'An Error Occur While Adding Roles',
