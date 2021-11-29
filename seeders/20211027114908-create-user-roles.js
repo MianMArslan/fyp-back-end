@@ -12,7 +12,6 @@ module.exports = {
         {
           userId: 1,
           roleId: 1,
-          isDeleted: false,
           createdAt: new Date(),
           updatedAt: new Date()
         }

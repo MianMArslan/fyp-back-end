@@ -14,7 +14,7 @@ module.exports = {
           email: 'mian.m.arslan@hotmail.com',
           password:
             '$2b$10$dX9jrxWEv8VQQn82uaowKeZiW4sMBGBAyi5y2oUX9O.A0Iy4g.lhu',
-          isVerified: 'admin',
+          isVerified: 'email',
           isDeleted: false,
           createdAt: new Date(),
           updatedAt: new Date()
