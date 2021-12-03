@@ -1,5 +1,8 @@
 import Joi from 'joi'
+import db from '../models/index.js'
+import { httpError } from '../common/httpError.mjs'
 
+const { user } = db
 function validate(req, res, next) {
   const schema = Joi.object({
     firstName: Joi.string(),
@@ -24,13 +27,16 @@ function validateLogin(req, res, next) {
   next()
 }
 
-function validateEmail(req, res, next) {
+async function validateEmail(req, res, next) {
   const schema = Joi.object({
-    email: Joi.string().min(5).required().email()
+    email: Joi.string().min(5).required().email().external(verifyEmail)
   })
-  const { error } = schema.validate(req.body)
-  if (error) return res.fail({ error })
-  next()
+  try {
+    await schema.validateAsync(req.body)
+    next()
+  } catch (error) {
+    return httpError(error)
+  }
 }
 
 function updateValidation(req, res, next) {
@@ -43,6 +49,12 @@ function updateValidation(req, res, next) {
   const { error } = schema.validate(req.body)
   if (error) return res.fail({ error })
   next()
+}
+
+const verifyEmail = async function (email) {
+  const record = await user.findOne({ where: { email, isVerified: 'no' } })
+  if (record) return email
+  httpError('An error occur.')
 }
 
 export default { validate, validateLogin, validateEmail, updateValidation }

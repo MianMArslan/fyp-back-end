@@ -1,4 +1,6 @@
 import jwt from 'jsonwebtoken'
+import { tokenTime } from '../common/constants.mjs'
+import { httpError } from '../common/httpError.mjs'
 
 function getAuthToken(email) {
   const token = jwt.sign({ email: email }, process.env.SECRET, {
@@ -17,8 +19,29 @@ function verifyToken(req, res, next) {
     jwt.verify(token, process.env.SECRET)
     next()
   } catch (err) {
+    httpError(err)
+  }
+}
+
+async function accessToken(id, email) {
+  const token = await jwt.sign({ id, email }, process.env.SECRET, {
+    expiresIn: tokenTime
+  })
+  return token
+}
+
+function verifyAccessToken(req, res, next) {
+  console.log(req.cookies)
+  const { accessToken } = req.cookie
+  if (!accessToken) return res.fail({ error })
+  try {
+    jwt.verify(accessToken, process.env.SECRET)
+    next()
+  } catch (err) {
+    console.log(req.body)
     const error = new Error('Token is not valid')
     return res.fail({ error })
   }
 }
-export default { getAuthToken, getToken, verifyToken }
+
+export { getAuthToken, getToken, verifyToken, accessToken, verifyAccessToken }

@@ -2,20 +2,20 @@ import bcrypt from 'bcrypt'
 import db from '../models/index.js'
 import _ from 'lodash'
 import jwt_decode from 'jwt-decode'
-import { user } from '../common/constants.mjs'
+import { users } from '../common/constants.mjs'
 import { httpError } from '../common/httpError.mjs'
 
-const { users, sequelize } = db
+const { user, sequelize } = db
 
 async function createUsers(req, res, next) {
   const { firstName, lastName, email, password, roleId } = req.body
   let hashPassword
   try {
-    const checker = await users.findOne({ where: { email: email } })
+    const checker = await user.findOne({ where: { email: email } })
     if (_.isEmpty(checker)) {
       hashPassword = await bcrypt.hash(password, process.env.SALT)
       const t = await sequelize.transaction()
-      const user = await users.create(
+      const user = await user.create(
         {
           firstName: firstName,
           lastName: lastName,
@@ -53,7 +53,7 @@ async function getUsers(req, res) {
   if (limit) object.limit = limit
   if (offset || offset == 0) object.offset = offset
   try {
-    const records = await users.findAndCountAll(object)
+    const records = await user.findAndCountAll(object)
     return res.success({ data: records })
   } catch (error) {
     return httpError(error.message)
@@ -69,11 +69,11 @@ async function updateUser(req, res) {
   where.id = id
   if (object) {
     try {
-      await users.update(object, { where })
+      await user.update(object, { where })
       return res.status(201).success({
-        status: user.status,
-        message: user.userUpdated,
-        data: user.data
+        status: users.status,
+        message: users.userUpdated,
+        data: users.data
       })
     } catch (error) {
       return httpError(error)
@@ -84,7 +84,7 @@ async function updateUser(req, res) {
 async function deleteUser(req, res) {
   const { id } = req.body
   try {
-    await users.update({ isDeleted: true }, { where: { id } })
+    await user.update({ isDeleted: true }, { where: { id } })
     return res.success({
       status: 202,
       message: 'User Deleted Successfully!',
@@ -98,12 +98,11 @@ async function deleteUser(req, res) {
 async function verifyRole(req, res, next) {
   const { token } = req.body
   const decode = jwt_decode(token)
-  const verify = await users.update(
+  const verify = await user.update(
     { isVerified: 'email' },
     { where: { email: decode.email } }
   )
-  if (_.isEmpty(verify)) return httpError(user.notVerify)
-  next()
+  return res.success({ message: 'Email verify Successfully', data: verify })
 }
 
-export default { createUsers, verifyRole, getUsers, updateUser, deleteUser }
+export { createUsers, verifyRole, getUsers, updateUser, deleteUser }

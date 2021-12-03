@@ -2,7 +2,7 @@ export const isVerified = Object.freeze({
   NO: 'no',
   EMAIL: 'email'
 })
-export const user = {
+export const users = {
   addingRole: 'An Error Occur While Adding Roles',
   notVerify: 'verification is not successful',
   status: 201,
@@ -32,3 +32,5 @@ export const Email = {
     'Request is Successfully send to admin please wait until admin approve your request',
   verification: 'An error occur while verification'
 }
+
+export const tokenTime = '86400s'
