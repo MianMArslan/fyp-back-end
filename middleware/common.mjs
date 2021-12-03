@@ -66,4 +66,4 @@ async function verifyRoles(req, res, next) {
     return res.error({ error })
   }
 }
-export default { sendEmail, verifyEmail, findUser, verifyRoles }
+export { sendEmail, verifyEmail, findUser, verifyRoles }

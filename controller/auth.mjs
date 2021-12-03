@@ -1,14 +1,13 @@
 import bcrypt from 'bcrypt'
 import db from '../models/index.js'
 import _ from 'lodash'
-import common from '../middleware/common.mjs'
-import authToken from '../middleware/token.mjs'
+import { sendEmail } from '../middleware/common.mjs'
+import { getAuthToken, getToken } from '../middleware/token.mjs'
 import { httpError } from '../common/httpError.mjs'
 import { isVerified, auth, Email } from '../common/constants.mjs'
 import jwtDecode from 'jwt-decode'
+import { accessToken } from '../middleware/token.mjs'
 
-const { getAuthToken, getToken } = authToken
-const { sendEmail } = common
 const { user, sequelize } = db
 
 async function registration(req, res) {
@@ -57,38 +56,23 @@ async function registration(req, res) {
   }
 }
 
-async function verifyUser(req, res) {
-  const { token } = req.body
-  const decode = jwtDecode(token)
-  const html = ' Hello Admin'
-    .concat(`New User Signup Successfully with this email: ${decode.email}  <br />kindly Verification this user and update his/her verification status
-     <br /><br /> Best Regards.`)
-  try {
-    await sendEmail(Email.toAdmin, Email.subjectToAdmin, html)
-    return res.success({ status: 200, message: Email.sendToAdmin, data: null })
-  } catch (err) {
-    return res.error({ error: { message: Email.verification } })
-  }
-}
-
 async function login(req, res) {
   const { email, password } = req.body
   try {
     let hashPassword = await bcrypt.hash(password, process.env.SALT)
-    const verification = await user.findOne({
+    const record = await user.findOne({
       where: { email: email, password: hashPassword }
     })
-    if (!verification) return res.fail({ error: auth.inValid })
-    if (verification.isVerified == isVerified.NO)
-      return res.fail({ error: { message: auth.notVerified } })
-    if (verification.isVerified == isVerified.EMAIL)
-      return res.fail({ error: { message: auth.emailVerified } })
-    if (verification.isVerified == isVerified.ADMIN)
-      return res.success({
-        status: auth.status,
-        message: auth.message,
-        data: auth.data
-      })
+    if (!record) return res.fail({ error: auth.inValid })
+    if (record.isVerified == isVerified.NO) return httpError(auth.notVerified)
+    const token = await accessToken(record.id, record.email)
+    res.cookie('accessToken', token)
+    res.session = record.id
+    return res.success({
+      status: auth.status,
+      message: auth.message,
+      data: record
+    })
   } catch (error) {
     return res.error({ error })
   }
@@ -104,9 +88,7 @@ async function forgotPassword(req, res) {
   try {
     await sendEmail(to, auth.subjectForgotPassword, html)
     return res.success({
-      status: 201,
-      message: auth.messageForgotPassword,
-      data: null
+      message: auth.messageForgotPassword
     })
   } catch (err) {
     return res.error({ error: { message: auth.errorForgotPassword } })
@@ -141,19 +123,10 @@ async function resendEmailLink(req, res, next) {
                     This link is expire after 15 minutes<br /> Best Regards.`)
   try {
     await sendEmail(to, auth.subjectResend, html)
-    return res
-      .status(200)
-      .success({ status: 200, message: auth.messageResend, data: null })
+    return res.success({ message: auth.messageResend })
   } catch (error) {
     return httpError(auth.messageForgotPassword)
   }
 }
 
-export default {
-  registration,
-  verifyUser,
-  login,
-  forgotPassword,
-  resetPassword,
-  resendEmailLink
-}
+export { registration, login, forgotPassword, resetPassword, resendEmailLink }

@@ -39,4 +39,4 @@ async function queryValidation(req, res, next) {
   next()
 }
 
-export default { validate, validateId, queryValidation }
+export { validate, validateId, queryValidation }

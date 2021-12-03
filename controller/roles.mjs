@@ -70,4 +70,4 @@ async function getRoles(req, res) {
   }
 }
 
-export default { createRole, updateRole, deleteRole, getRoles }
+export { createRole, updateRole, deleteRole, getRoles }
