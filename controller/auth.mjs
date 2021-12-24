@@ -63,11 +63,13 @@ async function login(req, res) {
     const record = await user.findOne({
       where: { email: email, password: hashPassword }
     })
+    const userRecord = await record.getRoles()
     if (!record) return res.fail({ error: auth.inValid })
     if (record.isVerified == isVerified.NO) return httpError(auth.notVerified)
     const token = await accessToken(record.id, record.email)
     res.cookie('accessToken', token)
-    res.session = record.id
+    req.session.userSession = userRecord
+    // console.log(req.session)
     return res.success({
       status: auth.status,
       message: auth.message,

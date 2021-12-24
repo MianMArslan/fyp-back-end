@@ -1,7 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import { verifyAccessToken } from '../middleware/token.mjs'
-import userMiddleware from '../middleware/users.mjs'
+import { validate, validateLogin, validateEmail } from '../middleware/users.mjs'
 import { verifyToken } from '../middleware/token.mjs'
 import {
   registration,
@@ -12,8 +11,6 @@ import {
 } from '../controller/auth.mjs'
 import { verifyRole } from '../controller/users.mjs'
 import { verifyEmail } from '../middleware/common.mjs'
-
-const { validate, validateLogin, validateEmail } = userMiddleware
 
 router.post('/registration', validate, registration)
 router.post('/user-email-verification', verifyToken, verifyRole)

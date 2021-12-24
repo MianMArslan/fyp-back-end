@@ -1,7 +1,10 @@
 import jwt from 'jsonwebtoken'
 import { tokenTime } from '../common/constants.mjs'
 import { httpError } from '../common/httpError.mjs'
+import db from '../models/index.js'
+import jwt_decode from 'jwt-decode'
 
+const { user } = db
 function getAuthToken(email) {
   const token = jwt.sign({ email: email }, process.env.SECRET, {
     expiresIn: '950s'
@@ -30,18 +33,57 @@ async function accessToken(id, email) {
   return token
 }
 
-function verifyAccessToken(req, res, next) {
-  console.log(req.cookies)
-  const { accessToken } = req.cookie
-  if (!accessToken) return res.fail({ error })
+async function authorizeTourist(req, res, next) {
+  const { userSession } = req.session
+  // console.log(userSession)
+  if (!userSession) return httpError('Session Expire Please Login Again')
+  // console.log(userSession[0].userRoles.userId)
+  const { accessToken } = req.cookies
+  if (!accessToken) return httpError('No access Token is provided')
   try {
     jwt.verify(accessToken, process.env.SECRET)
-    next()
+    const decode = jwt_decode(accessToken)
+    const record = await user.findOne({ where: { email: decode.email } })
+    const userRecord = await record.getRoles()
+    if (
+      userRecord[0].userRoles.userId == userSession[0].userRoles.userId &&
+      userRecord[0].title == 'tourist'
+    )
+      next()
+    else return httpError('Unauthorize for this request')
   } catch (err) {
-    console.log(req.body)
-    const error = new Error('Token is not valid')
-    return res.fail({ error })
+    httpError('Invalid Token')
   }
 }
 
-export { getAuthToken, getToken, verifyToken, accessToken, verifyAccessToken }
+async function authorizeAgency(req, res, next) {
+  const { userSession } = req.session
+  // console.log(userSession)
+  if (!userSession) return httpError('Session Expire Please Login Again')
+  // console.log(userSession[0].userRoles.userId)
+  const { accessToken } = req.cookies
+  if (!accessToken) return httpError('No access Token is provided')
+  try {
+    jwt.verify(accessToken, process.env.SECRET)
+    const decode = jwt_decode(accessToken)
+    const record = await user.findOne({ where: { email: decode.email } })
+    const userRecord = await record.getRoles()
+    if (
+      userRecord[0].userRoles.userId == userSession[0].userRoles.userId &&
+      userRecord[0].title == 'agency'
+    )
+      next()
+    else return httpError('Unauthorize for this request')
+  } catch (err) {
+    httpError('Invalid Token')
+  }
+}
+
+export {
+  getAuthToken,
+  getToken,
+  verifyToken,
+  accessToken,
+  authorizeAgency,
+  authorizeTourist
+}

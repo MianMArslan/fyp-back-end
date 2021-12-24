@@ -57,4 +57,4 @@ const verifyEmail = async function (email) {
   httpError('An error occur.')
 }
 
-export default { validate, validateLogin, validateEmail, updateValidation }
+export { validate, validateLogin, validateEmail, updateValidation }
