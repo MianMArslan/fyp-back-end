@@ -8,7 +8,7 @@ import { isVerified, auth, Email } from '../common/constants.mjs'
 import jwtDecode from 'jwt-decode'
 import { accessToken } from '../middleware/token.mjs'
 
-const { user, sequelize } = db
+const { user, sequelize, location } = db
 
 async function registration(req, res) {
   const { firstName, lastName, email, password, roleId } = req.body
@@ -64,12 +64,28 @@ async function login(req, res) {
       where: { email: email, password: hashPassword }
     })
     const userRecord = await record.getRoles()
+
     if (!record) return res.fail({ error: auth.inValid })
     if (record.isVerified == isVerified.NO) return httpError(auth.notVerified)
     const token = await accessToken(record.id, record.email)
     res.cookie('accessToken', token)
     req.session.userSession = userRecord
-    // console.log(req.session)
+    // console.log(record)
+
+    const locationRecord = await location.findOne({
+      where: { userId: record.id }
+    })
+
+    const { latitude, longitude } = req.locationDetail
+
+    if (!locationRecord)
+      await location.create({ userId: record.id, latitude, longitude })
+    else
+      await location.update(
+        { latitude, longitude },
+        { where: { userId: record.id } }
+      )
+
     return res.success({
       status: auth.status,
       message: auth.message,

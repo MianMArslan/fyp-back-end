@@ -56,6 +56,29 @@ async function authorizeTourist(req, res, next) {
   }
 }
 
+async function authorizeAdmin(req, res, next) {
+  const { userSession } = req.session
+  // console.log(userSession)
+  if (!userSession) return httpError('Session Expire Please Login Again')
+  // console.log(userSession[0].userRoles.userId)
+  const { accessToken } = req.cookies
+  if (!accessToken) return httpError('No access Token is provided')
+  try {
+    jwt.verify(accessToken, process.env.SECRET)
+    const decode = jwt_decode(accessToken)
+    const record = await user.findOne({ where: { email: decode.email } })
+    const userRecord = await record.getRoles()
+    if (
+      userRecord[0].userRoles.userId == userSession[0].userRoles.userId &&
+      userRecord[0].title == 'admin'
+    )
+      next()
+    else return httpError('Unauthorize for this request')
+  } catch (err) {
+    httpError('Invalid Token')
+  }
+}
+
 async function authorizeAgency(req, res, next) {
   const { userSession } = req.session
   // console.log(userSession)
@@ -85,5 +108,6 @@ export {
   verifyToken,
   accessToken,
   authorizeAgency,
-  authorizeTourist
+  authorizeTourist,
+  authorizeAdmin
 }
