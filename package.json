@@ -20,6 +20,7 @@
     "express": "~4.16.1",
     "express-async-errors": "^3.1.1",
     "express-session": "^1.17.2",
+    "form-data": "^4.0.0",
     "helmet": "^4.6.0",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
@@ -40,5 +41,8 @@
     "nodemon": "^2.0.14",
     "prettier": "^2.4.1",
     "sequelize-cli": "^6.2.0"
+  },
+  "engines": {
+    "node": "16.11.0"
   }
 }
