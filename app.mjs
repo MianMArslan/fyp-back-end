@@ -1,5 +1,6 @@
 import createError from 'http-errors'
 import env from 'dotenv'
+import cors from 'cors'
 env.config()
 import express from 'express'
 import helmet from 'helmet'
@@ -18,10 +19,12 @@ const jSend = new JSend({ name: 'appName', version: 'X.X.X', release: 'XX' })
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
-  next()
-})
+const corsOptions = {
+  credentials: true,
+  origin: ['http://localhost:4001']
+}
+app.use(cors(corsOptions))
+setRoutes(app)
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
