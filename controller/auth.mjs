@@ -89,7 +89,7 @@ async function login(req, res) {
     return res.success({
       status: auth.status,
       message: auth.message,
-      data: record
+      data: userRecord
     })
   } catch (error) {
     return res.error({ error })
