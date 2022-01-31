@@ -21,7 +21,7 @@ app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
 const corsOptions = {
   credentials: true,
-  origin: ['http://localhost:4001']
+  origin: ['http://localhost:3000']
 }
 app.use(logger('dev'))
 app.use(express.json())
