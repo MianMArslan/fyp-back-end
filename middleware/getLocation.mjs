@@ -30,9 +30,10 @@ async function getUserLocationDate(req, res, next) {
   }
   const value = await axios.request(options)
   if (value) {
+    console.log(value.data)
     req.locationDetail = value.data
     next()
-  } else httpError('Error Occure While Getting User locatin detail')
+  } else httpError('Error Occur While Getting User location detail')
 }
 
 export { getUserLocationDate }

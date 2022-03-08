@@ -53,7 +53,7 @@ async function getUsers(req, res) {
   if (limit) object.limit = limit
   if (offset || offset == 0) object.offset = offset
   console.log('==================')
-  // console.log(req.session.user)
+  // console.log(req.session)
   return
   try {
     const records = await user.findAndCountAll()

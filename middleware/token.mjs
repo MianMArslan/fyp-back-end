@@ -50,7 +50,7 @@ async function authorizeTourist(req, res, next) {
       userRecord[0].title == 'tourist'
     )
       next()
-    else return httpError('Unauthorize for this request')
+    else res.fail({ code: 400, error: { message: 'UnAuthorize' } })
   } catch (err) {
     httpError('Invalid Token')
   }
@@ -73,7 +73,7 @@ async function authorizeAdmin(req, res, next) {
       userRecord[0].title == 'admin'
     )
       next()
-    else return httpError('Unauthorize for this request')
+    else res.fail({ code: 400, error: { message: 'UnAuthorize' } })
   } catch (err) {
     httpError('Invalid Token')
   }
@@ -96,7 +96,7 @@ async function authorizeAgency(req, res, next) {
       userRecord[0].title == 'agency'
     )
       next()
-    else return httpError('Unauthorize for this request')
+    else res.fail({ code: 400, error: { message: 'UnAuthorize' } })
   } catch (err) {
     httpError('Invalid Token')
   }
