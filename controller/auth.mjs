@@ -7,7 +7,8 @@ import { httpError } from '../common/httpError.mjs'
 import { isVerified, auth, Email } from '../common/constants.mjs'
 import jwtDecode from 'jwt-decode'
 import { accessToken } from '../middleware/token.mjs'
-import { getIp } from '../middleware/getIP.mjs'
+import ejs from 'ejs'
+import path from 'path'
 const { user, sequelize, location, locationLog } = db
 
 async function registration(req, res) {
@@ -32,12 +33,25 @@ async function registration(req, res) {
         const token = getAuthToken(email)
         const to = email
         const subject = 'Verify Your Email'
-        const html = ' Hello '
-          .concat(` , <br /></br > We receive your request for Signup. 
-                    <br /> Here is the link for Verification :
-                    <a href="http://localhost:400/verify?token=${token}"> 
-                    Click here to verify your email </a> <br />
-                    This link is expire after 15 minutes<br /> Best Regards.`)
+        // const html = ' Hello '
+        //   .concat(` , <br /></br > We receive your request for Signup.
+        //             <br /> Here is the link for Verification :
+        //             <a href="http://localhost:400/verify?token=${token}">
+        //             Click here to verify your email </a> <br />
+        //             This link is expire after 15 minutes<br /> Best Regards.`)
+        //             const __dirname = path.resolve()
+        const __dirname = path.resolve()
+        const resetPasswordTemplate = `${__dirname}/views/template.ejs`
+        const logoLink = `${__dirname}/views/banner.png`
+        console.log(resetPasswordTemplate)
+        let html = await ejs.renderFile(resetPasswordTemplate, {
+          link: `http://localhost:400/verify?token=${token}`,
+          logoLink,
+          heading: 'Trouble signing in?',
+          paragraph: ``,
+          btnTitle: `Verify Email`,
+          footer: `You received this email because you requested to create account. If you did not,please contact`
+        })
         await sendEmail(to, subject, html)
         await t.commit()
         const status = 201
