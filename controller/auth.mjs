@@ -7,8 +7,8 @@ import { httpError } from '../common/httpError.mjs'
 import { isVerified, auth, Email } from '../common/constants.mjs'
 import jwtDecode from 'jwt-decode'
 import { accessToken } from '../middleware/token.mjs'
-
-const { user, sequelize, location } = db
+import { getIp } from '../middleware/getIP.mjs'
+const { user, sequelize, location, locationLog } = db
 
 async function registration(req, res) {
   const { firstName, lastName, email, password, roleId } = req.body
@@ -58,25 +58,31 @@ async function registration(req, res) {
 
 async function login(req, res) {
   const { email, password } = req.body
+  let userData = {}
   try {
     let hashPassword = await bcrypt.hash(password, process.env.SALT)
     const record = await user.findOne({
       where: { email: email, password: hashPassword }
     })
+    userData.UserRecord = {
+      userId: record.id,
+      firstName: record.firstName,
+      lastName: record.lastName,
+      email: record.email
+    }
     const userRecord = await record.getRoles()
-
+    userData.userRole = { title: userRecord[0].title }
     if (!record) return res.fail({ error: auth.inValid })
     if (record.isVerified == isVerified.NO) return httpError(auth.notVerified)
     const token = await accessToken(record.id, record.email)
     res.cookie('accessToken', token)
-    req.session.userSession = userRecord
-    // console.log(record)
+    req.session.userSession = userData
 
     const locationRecord = await location.findOne({
       where: { userId: record.id }
     })
 
-    const { latitude, longitude } = req.locationDetail
+    const { latitude, longitude, ipAddress } = req.locationDetails
 
     if (!locationRecord)
       await location.create({ userId: record.id, latitude, longitude })
@@ -85,11 +91,16 @@ async function login(req, res) {
         { latitude, longitude },
         { where: { userId: record.id } }
       )
-
+    await locationLog.create({
+      userId: record.id,
+      lat: latitude,
+      long: longitude,
+      ipAddress
+    })
     return res.success({
       status: auth.status,
       message: auth.message,
-      data: userRecord
+      data: userData
     })
   } catch (error) {
     return res.error({ error })
