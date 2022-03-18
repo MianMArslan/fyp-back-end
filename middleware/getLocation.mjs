@@ -17,7 +17,7 @@ import { httpError } from '../common/httpError.mjs'
 // 	console.error(error);
 // });
 
-async function getUserLocationDate(req, res, next) {
+async function getUserLocationData(req, res, next) {
   const options = {
     method: 'GET',
     url: 'https://find-any-ip-address-or-domain-location-world-wide.p.rapidapi.com/iplocation',
@@ -30,10 +30,26 @@ async function getUserLocationDate(req, res, next) {
   }
   const value = await axios.request(options)
   if (value) {
-    console.log(value.data)
     req.locationDetail = value.data
     next()
   } else httpError('Error Occur While Getting User location detail')
 }
 
-export { getUserLocationDate }
+async function getUserLocationDetails(req, res, next) {
+  const { ip } = req.locationDetail
+  const options = {
+    method: 'GET',
+    url: `https://api.ipinfodb.com/v3/ip-city/?key=b52e5a56515e87a549252be9ed20be7002a73dfa9af29f242f860817ccb5cab3&ip=${ip}&format=json`,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+  const value = await axios.request(options)
+  if (value) {
+    console.log(value.data)
+    req.locationDetails = value.data
+    next()
+  } else httpError('Error Occur While Getting User location detail')
+}
+
+export { getUserLocationData, getUserLocationDetails }
