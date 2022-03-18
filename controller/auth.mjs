@@ -76,7 +76,6 @@ async function login(req, res) {
     if (record.isVerified == isVerified.NO) return httpError(auth.notVerified)
     const token = await accessToken(record.id, record.email)
     res.cookie('accessToken', token)
-    req.session.userSession = userData
 
     const locationRecord = await location.findOne({
       where: { userId: record.id }

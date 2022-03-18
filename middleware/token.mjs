@@ -34,69 +34,78 @@ async function accessToken(id, email) {
 }
 
 async function authorizeTourist(req, res, next) {
-  const { userSession } = req.session
-  // console.log(userSession)
-  if (!userSession) return httpError('Session Expire Please Login Again')
-  // console.log(userSession[0].userRoles.userId)
+  let userData = {}
   const { accessToken } = req.cookies
   if (!accessToken) return httpError('No access Token is provided')
   try {
     jwt.verify(accessToken, process.env.SECRET)
     const decode = jwt_decode(accessToken)
     const record = await user.findOne({ where: { email: decode.email } })
+    userData.UserRecord = {
+      userId: record.id,
+      firstName: record.firstName,
+      lastName: record.lastName,
+      email: record.email
+    }
     const userRecord = await record.getRoles()
-    if (
-      userRecord[0].userRoles.userId == userSession[0].userRoles.userId &&
-      userRecord[0].title == 'tourist'
-    )
+    userData.userRole = { title: userRecord[0].title }
+
+    if (userRecord[0].title == 'tourist') {
+      req.session.userSession = userData
       next()
-    else res.fail({ code: 400, error: { message: 'UnAuthorize' } })
+    } else res.fail({ code: 400, error: { message: 'UnAuthorize' } })
   } catch (err) {
     httpError('Invalid Token')
   }
 }
 
 async function authorizeAdmin(req, res, next) {
-  const { userSession } = req.session
-  // console.log(userSession)
-  if (!userSession) return httpError('Session Expire Please Login Again')
-  // console.log(userSession[0].userRoles.userId)
+  let userData = {}
   const { accessToken } = req.cookies
   if (!accessToken) return httpError('No access Token is provided')
   try {
     jwt.verify(accessToken, process.env.SECRET)
     const decode = jwt_decode(accessToken)
     const record = await user.findOne({ where: { email: decode.email } })
+    userData.UserRecord = {
+      userId: record.id,
+      firstName: record.firstName,
+      lastName: record.lastName,
+      email: record.email
+    }
     const userRecord = await record.getRoles()
-    if (
-      userRecord[0].userRoles.userId == userSession[0].userRoles.userId &&
-      userRecord[0].title == 'admin'
-    )
+    userData.userRole = { title: userRecord[0].title }
+
+    if (userRecord[0].title == 'admin') {
+      req.session.userSession = userData
       next()
-    else res.fail({ code: 400, error: { message: 'UnAuthorize' } })
+    } else res.fail({ code: 400, error: { message: 'UnAuthorize' } })
   } catch (err) {
     httpError('Invalid Token')
   }
 }
 
 async function authorizeAgency(req, res, next) {
-  const { userSession } = req.session
-  // console.log(userSession)
-  if (!userSession) return httpError('Session Expire Please Login Again')
-  // console.log(userSession[0].userRoles.userId)
+  let userData = {}
   const { accessToken } = req.cookies
   if (!accessToken) return httpError('No access Token is provided')
   try {
     jwt.verify(accessToken, process.env.SECRET)
     const decode = jwt_decode(accessToken)
     const record = await user.findOne({ where: { email: decode.email } })
+    userData.UserRecord = {
+      userId: record.id,
+      firstName: record.firstName,
+      lastName: record.lastName,
+      email: record.email
+    }
     const userRecord = await record.getRoles()
-    if (
-      userRecord[0].userRoles.userId == userSession[0].userRoles.userId &&
-      userRecord[0].title == 'agency'
-    )
+    userData.userRole = { title: userRecord[0].title }
+
+    if (userRecord[0].title == 'agency') {
+      req.session.userSession = userData
       next()
-    else res.fail({ code: 400, error: { message: 'UnAuthorize' } })
+    } else res.fail({ code: 400, error: { message: 'UnAuthorize' } })
   } catch (err) {
     httpError('Invalid Token')
   }
