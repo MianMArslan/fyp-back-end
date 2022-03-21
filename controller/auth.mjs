@@ -43,7 +43,6 @@ async function registration(req, res) {
         const __dirname = path.resolve()
         const resetPasswordTemplate = `${__dirname}/views/template.ejs`
         const logoLink = `./banner.png`
-        console.log(resetPasswordTemplate)
         let html = await ejs.renderFile(resetPasswordTemplate, {
           token: `http://localhost:400/verify?token=${token}`,
           logoLink,
@@ -125,9 +124,18 @@ async function forgotPassword(req, res) {
   const { email } = req.body
   const token = getToken(email)
   const to = `${email}`
-  const html = ' Hello '
-    .concat(` , <br /></br > We receive your request to Reset Password. <br /> Here is the link for resetting your password :
-      <a href="http://localhost:400/verify?token=${token}"> Click here to reset your password </a> <br /><br /> Best Regards.`)
+  const __dirname = path.resolve()
+  const resetPasswordTemplate = `${__dirname}/views/template.ejs`
+  const logoLink = `./banner.png`
+  let html = await ejs.renderFile(resetPasswordTemplate, {
+    token: `http://localhost:3000/resetPassword?token=${token}`,
+    logoLink,
+    user: 'We receive your request to Reset Password.',
+    header: 'Trouble signing in?',
+    button: `Reset Password`,
+    hiddenHeader: 'abc',
+    footer: `You received this email because you requested to create account. If you did not,please contact`
+  })
   try {
     await sendEmail(to, auth.subjectForgotPassword, html)
     return res.success({
