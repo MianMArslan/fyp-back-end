@@ -42,14 +42,15 @@ async function registration(req, res) {
         //             const __dirname = path.resolve()
         const __dirname = path.resolve()
         const resetPasswordTemplate = `${__dirname}/views/template.ejs`
-        const logoLink = `${__dirname}/views/banner.png`
+        const logoLink = `./banner.png`
         console.log(resetPasswordTemplate)
         let html = await ejs.renderFile(resetPasswordTemplate, {
-          link: `http://localhost:400/verify?token=${token}`,
+          token: `http://localhost:400/verify?token=${token}`,
           logoLink,
-          heading: 'Trouble signing in?',
-          paragraph: ``,
-          btnTitle: `Verify Email`,
+          user: 'aaa',
+          header: 'Trouble signing in?',
+          button: `Verify Email`,
+          hiddenHeader: 'abc',
           footer: `You received this email because you requested to create account. If you did not,please contact`
         })
         await sendEmail(to, subject, html)

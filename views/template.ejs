@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
   <head>
     <title></title>
@@ -5,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <style type="text/css">
-      /* FONTS */
       @media screen {
         @font-face {
           font-family: 'Lato';
@@ -52,11 +52,13 @@
         -webkit-text-size-adjust: 100%;
         -ms-text-size-adjust: 100%;
       }
+
       table,
       td {
         mso-table-lspace: 0pt;
         mso-table-rspace: 0pt;
       }
+
       img {
         -ms-interpolation-mode: bicubic;
       }
@@ -69,9 +71,11 @@
         outline: none;
         text-decoration: none;
       }
+
       table {
         border-collapse: collapse !important;
       }
+
       body {
         height: 100% !important;
         margin: 0 !important;
@@ -89,12 +93,21 @@
         line-height: inherit !important;
       }
 
+      /* MOBILE STYLES */
+      @media screen and (max-width: 600px) {
+        h1 {
+          font-size: 32px !important;
+          line-height: 32px !important;
+        }
+      }
+
       /* ANDROID CENTER FIX */
       div[style*='margin: 16px 0;'] {
         margin: 0 !important;
       }
     </style>
   </head>
+
   <body
     style="
       background-color: #f4f4f4;
@@ -116,54 +129,54 @@
         overflow: hidden;
       "
     >
-      Looks like you tried signing in a few too many times. Let's see if we can
-      get you back into your account.
+      <%= hiddenHeader%>
     </div>
-
     <table border="0" cellpadding="0" cellspacing="0" width="100%">
       <!-- LOGO -->
       <tr>
-        <td
-          style="
-            background: linear-gradient(
-                270deg,
-                #6ecffa 0%,
-                rgba(255, 255, 255, 0) 100%
-              ),
-              #51c584;
-          "
-          align="center"
-        >
-          <table border="0" cellpadding="0" cellspacing="0" width="480">
+        <td bgcolor="#2FD694" align="center">
+          <table
+            border="0"
+            cellpadding="0"
+            cellspacing="0"
+            width="100%"
+            style="max-width: 600px"
+          >
             <tr>
               <td
                 align="center"
                 valign="top"
                 style="padding: 40px 10px 40px 10px"
               >
-                <a href="#" target="_blank">
-                  <h1>hello</h1>
+                <a href="https://www.sbahandyman.com/" target="_blank">
+                  <img
+                    alt="Logo"
+                    src="<%= logoLink %>"
+                    width="100"
+                    height="100"
+                    style="
+                      display: block;
+                      font-family: 'Lato', Helvetica, Arial, sans-serif;
+                      color: #ffffff;
+                      font-size: 18px;
+                    "
+                    border="0"
+                  />
                 </a>
               </td>
             </tr>
           </table>
         </td>
       </tr>
-      <!-- HERO -->
       <tr>
-        <td
-          align="center"
-          style="
-            padding: 0px 10px 0px 10px;
-            background: linear-gradient(
-                270deg,
-                #6ecffa 0%,
-                rgba(255, 255, 255, 0) 100%
-              ),
-              #51c584;
-          "
-        >
-          <table border="0" cellpadding="0" cellspacing="0" width="480">
+        <td bgcolor="#2FD694" align="center" style="padding: 0px 10px 0px 10px">
+          <table
+            border="0"
+            cellpadding="0"
+            cellspacing="0"
+            width="100%"
+            style="max-width: 600px"
+          >
             <tr>
               <td
                 bgcolor="#ffffff"
@@ -180,19 +193,29 @@
                   line-height: 48px;
                 "
               >
-                <h1 style="font-size: 32px; font-weight: 400; margin: 0">
-                  <%= heading %>
+                <h1 style="font-size: 38px; font-weight: 200; margin: 2">
+                  <%= header %>
                 </h1>
+                <!-- <img
+                  src=" https://img.icons8.com/clouds/100/000000/handshake.png"
+                  width="125"
+                  height="120"
+                  style="display: block; border: 0px"
+                /> -->
               </td>
             </tr>
           </table>
         </td>
       </tr>
-      <!-- COPY BLOCK -->
       <tr>
         <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px">
-          <table border="0" cellpadding="0" cellspacing="0" width="480">
-            <!-- COPY -->
+          <table
+            border="0"
+            cellpadding="0"
+            cellspacing="0"
+            width="100%"
+            style="max-width: 600px"
+          >
             <tr>
               <td
                 bgcolor="#ffffff"
@@ -206,10 +229,9 @@
                   line-height: 25px;
                 "
               >
-                <p style="margin: 0"><%= paragraph %></p>
+                <p style="margin: 0"><%= user %></p>
               </td>
             </tr>
-            <!-- BULLETPROOF BUTTON -->
             <tr>
               <td bgcolor="#ffffff" align="left">
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -224,29 +246,26 @@
                           <td
                             align="center"
                             style="border-radius: 3px"
-                            bgcolor="#3096de"
+                            bgcolor="#2FD694"
                           >
                             <a
-                              href="<%= link %>"
+                              href="<%= token %>"
                               target="_blank"
                               style="
                                 font-size: 20px;
                                 font-family: Helvetica, Arial, sans-serif;
-                                background: linear-gradient(
-                                    270deg,
-                                    #6ecffa 0%,
-                                    rgba(255, 255, 255, 0) 100%
-                                  ),
-                                  #51c584;
-                                text-decoration: none;
                                 color: #ffffff;
                                 text-decoration: none;
                                 padding: 15px 25px;
                                 border-radius: 2px;
-                                border: 1px solid;
+                                background-image: linear-gradient(
+                                  188deg,
+                                  rgba(116, 214, 144, 1) 8%,
+                                  rgba(232, 224, 48, 1) 66%
+                                );
                                 display: inline-block;
                               "
-                              ><%= btnTitle %></a
+                              ><%= button%></a
                             >
                           </td>
                         </tr>
@@ -256,55 +275,62 @@
                 </table>
               </td>
             </tr>
-          </table>
-        </td>
-      </tr>
-
-      <!-- FOOTER -->
-      <tr>
-        <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px">
-          <table border="0" cellpadding="0" cellspacing="0" width="480">
-            <!-- PERMISSION REMINDER -->
+            <!-- COPY -->
             <tr>
               <td
-                bgcolor="#f4f4f4"
+                bgcolor="#ffffff"
                 align="left"
                 style="
-                  padding: 15px 30px 30px 30px;
+                  padding: 0px 30px 0px 30px;
                   color: #666666;
                   font-family: 'Lato', Helvetica, Arial, sans-serif;
-                  font-size: 14px;
+                  font-size: 18px;
                   font-weight: 400;
-                  line-height: 18px;
+                  line-height: 25px;
                 "
               >
-                <p style="margin: 0">
-                  <%= footer %>
-                  <a
-                    href="#"
-                    target="_blank"
-                    style="color: #111111; font-weight: 700"
-                    >Off the beaten track</a
-                  >.
-                </p>
+                <!-- <p style="margin: 0">
+                  If that doesn't work, copy and paste the following token in
+                  your browser:
+                </p> -->
               </td>
             </tr>
-
-            <!-- ADDRESS -->
+            <!-- COPY -->
             <tr>
               <td
-                bgcolor="#f4f4f4"
+                bgcolor="#ffffff"
                 align="left"
                 style="
-                  padding: 0px 30px 30px 30px;
+                  padding: 20px 30px 20px 30px;
                   color: #666666;
                   font-family: 'Lato', Helvetica, Arial, sans-serif;
-                  font-size: 14px;
+                  font-size: 18px;
                   font-weight: 400;
-                  line-height: 18px;
+                  line-height: 25px;
                 "
               >
-                <!-- <p style="margin: 0;">Address: abc, St abc</p> -->
+                <!-- <p style="margin: 0">
+                  <a href="<%= token %>" target="_blank" style="color: #2fd694"
+                    ><%= token %></a
+                  >
+                </p> -->
+              </td>
+            </tr>
+            <tr>
+              <td
+                bgcolor="#ffffff"
+                align="left"
+                style="
+                  padding: 0px 30px 40px 30px;
+                  border-radius: 0px 0px 4px 4px;
+                  color: #666666;
+                  font-family: 'Lato', Helvetica, Arial, sans-serif;
+                  font-size: 18px;
+                  font-weight: 400;
+                  line-height: 25px;
+                "
+              >
+                <!-- <p style="margin: 0">Cheers,<br />BBB Team</p> -->
               </td>
             </tr>
           </table>
