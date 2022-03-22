@@ -46,7 +46,6 @@ async function getUserLocationDetails(req, res, next) {
   }
   const value = await axios.request(options)
   if (value) {
-    console.log(value.data)
     req.locationDetails = value.data
     next()
   } else httpError('Error Occur While Getting User location detail')

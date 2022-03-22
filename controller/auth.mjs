@@ -78,6 +78,8 @@ async function login(req, res) {
     const record = await user.findOne({
       where: { email: email, password: hashPassword }
     })
+    if (!record) return res.fail({ error: { message: auth.inValid } })
+    if (record.isVerified == isVerified.NO) return httpError(auth.notVerified)
     userData.UserRecord = {
       userId: record.id,
       firstName: record.firstName,
@@ -86,8 +88,6 @@ async function login(req, res) {
     }
     const userRecord = await record.getRoles()
     userData.userRole = { title: userRecord[0].title }
-    if (!record) return res.fail({ error: auth.inValid })
-    if (record.isVerified == isVerified.NO) return httpError(auth.notVerified)
     const token = await accessToken(record.id, record.email)
     res.cookie('accessToken', token)
 
