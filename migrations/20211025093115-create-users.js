@@ -1,7 +1,7 @@
 'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('user', {
+    await queryInterface.createTable('users', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -27,8 +27,12 @@ module.exports = {
       },
       isVerified: {
         type: Sequelize.ENUM,
-        values: ['no', 'email', 'admin'],
+        values: ['no', 'email'],
         defaultValue: 'no'
+      },
+      intrust: {
+        type: Sequelize.STRING,
+        defaultValue: 'Others'
       },
       createdAt: {
         allowNull: false,
@@ -41,6 +45,6 @@ module.exports = {
     })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('user')
+    await queryInterface.dropTable('users')
   }
 }
