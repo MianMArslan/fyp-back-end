@@ -12,7 +12,7 @@ import path from 'path'
 const { user, sequelize, location, locationLog } = db
 
 async function registration(req, res) {
-  const { firstName, lastName, email, password, roleId, interest } = req.body
+  const { firstname, lastname, email, password, roleId, interest } = req.body
   let hashPassword
   const t = await sequelize.transaction()
   try {
@@ -21,10 +21,11 @@ async function registration(req, res) {
       hashPassword = await bcrypt.hash(password, process.env.SALT)
       const record = await user.create(
         {
-          firstName: firstName,
-          lastName: lastName,
+          firstName: firstname,
+          lastName: lastname,
           email: email,
-          password: hashPassword
+          password: hashPassword,
+          interest
         },
         { transaction: t }
       )
@@ -33,13 +34,6 @@ async function registration(req, res) {
         const token = getAuthToken(email)
         const to = email
         const subject = 'Verify Your Email'
-        // const html = ' Hello '
-        //   .concat(` , <br /></br > We receive your request for Signup.
-        //             <br /> Here is the link for Verification :
-        //             <a href="http://localhost:400/verify?token=${token}">
-        //             Click here to verify your email </a> <br />
-        //             This link is expire after 15 minutes<br /> Best Regards.`)
-        //             const __dirname = path.resolve()
         const __dirname = path.resolve()
         const resetPasswordTemplate = `${__dirname}/views/template.ejs`
         const logoLink = `./banner.png`
@@ -166,12 +160,19 @@ async function resendEmailLink(req, res, next) {
   const { email } = req.body
   const token = getAuthToken(email)
   const to = email
-  const html = ' Hello '
-    .concat(` , <br /></br > We receive your request for generating verification link. 
-                    <br /> Here is the link for Verification :
-                    <a href="http://localhost:400/verify?token=${token}"> 
-                    Click here to verify your email </a> <br />
-                    This link is expire after 15 minutes<br /> Best Regards.`)
+  const subject = 'Activate Your Account'
+  const __dirname = path.resolve()
+  const resetPasswordTemplate = `${__dirname}/views/template.ejs`
+  const logoLink = `./banner.png`
+  let html = await ejs.renderFile(resetPasswordTemplate, {
+    token: `http://localhost:3000/emailMessage?token=${token}`,
+    logoLink,
+    user: 'aaa',
+    header: 'Trouble signing in?',
+    button: `Verify Email`,
+    hiddenHeader: 'abc',
+    footer: `You received this email because you requested to create account. If you did not,please contact`
+  })
   try {
     await sendEmail(to, auth.subjectResend, html)
     return res.success({ message: auth.messageResend })

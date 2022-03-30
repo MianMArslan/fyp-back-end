@@ -39,6 +39,18 @@ async function validateEmail(req, res, next) {
   }
 }
 
+async function validateEmailForActivation(req, res, next) {
+  const schema = Joi.object({
+    email: Joi.string().required().email().external(verifyEmailForActivation)
+  })
+  try {
+    await schema.validateAsync(req.body)
+    next()
+  } catch (error) {
+    return res.fail({ error })
+  }
+}
+
 function updateValidation(req, res, next) {
   const schema = Joi.object({
     firstName: Joi.string(),
@@ -54,7 +66,21 @@ function updateValidation(req, res, next) {
 const verifyEmail = async function (email) {
   const record = await user.findOne({ where: { email, isVerified: 'email' } })
   if (record) return email
-  else httpError('Verify your email first', 401)
+  else httpError('Verify your email first', 400)
 }
 
-export { validate, validateLogin, validateEmail, updateValidation }
+const verifyEmailForActivation = async function (email) {
+  const value = await user.findOne({ where: { email } })
+  const record = await user.findOne({ where: { email, isVerified: 'no' } })
+  if (!value) httpError('Create an account!')
+  if (record) return email
+  else httpError('Account Already Active', 400)
+}
+
+export {
+  validate,
+  validateLogin,
+  validateEmail,
+  updateValidation,
+  validateEmailForActivation
+}

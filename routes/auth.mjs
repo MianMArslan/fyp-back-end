@@ -1,6 +1,11 @@
 import express from 'express'
 const router = express.Router()
-import { validate, validateLogin, validateEmail } from '../middleware/users.mjs'
+import {
+  validate,
+  validateLogin,
+  validateEmail,
+  validateEmailForActivation
+} from '../middleware/users.mjs'
 import { verifyToken } from '../middleware/token.mjs'
 import {
   getUserLocationData,
@@ -18,7 +23,11 @@ import { verifyEmail } from '../middleware/common.mjs'
 
 router.post('/registration', validate, registration)
 router.post('/user-email-verification', verifyToken, verifyRole)
-router.post('/resend-verification-link', validateEmail, resendEmailLink)
+router.post(
+  '/resend-verification-link',
+  validateEmailForActivation,
+  resendEmailLink
+)
 router.post(
   '/login',
   validateLogin,
