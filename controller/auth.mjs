@@ -12,7 +12,7 @@ import path from 'path'
 const { user, sequelize, location, locationLog } = db
 
 async function registration(req, res) {
-  const { firstName, lastName, email, password, roleId } = req.body
+  const { firstName, lastName, email, password, roleId, interest } = req.body
   let hashPassword
   const t = await sequelize.transaction()
   try {
@@ -44,7 +44,7 @@ async function registration(req, res) {
         const resetPasswordTemplate = `${__dirname}/views/template.ejs`
         const logoLink = `./banner.png`
         let html = await ejs.renderFile(resetPasswordTemplate, {
-          token: `http://localhost:400/verify?token=${token}`,
+          token: `http://localhost:3000/emailMessage?token=${token}`,
           logoLink,
           user: 'aaa',
           header: 'Trouble signing in?',
@@ -54,7 +54,7 @@ async function registration(req, res) {
         })
         await sendEmail(to, subject, html)
         await t.commit()
-        const status = 201
+        const status = 200
         const message =
           'Email is Successfully send kindly verify your email with in 15 minutes '
         return res.status(200).success({ status, message })

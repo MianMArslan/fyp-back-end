@@ -30,7 +30,7 @@ module.exports = {
         values: ['no', 'email'],
         defaultValue: 'no'
       },
-      intrust: {
+      interest: {
         type: Sequelize.STRING,
         defaultValue: 'Others'
       },
