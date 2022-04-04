@@ -93,7 +93,7 @@ async function authorizeAgency(req, res, next) {
     jwt.verify(accessToken, process.env.SECRET)
     const decode = jwt_decode(accessToken)
     const record = await user.findOne({ where: { email: decode.email } })
-    userData.UserRecord = {
+    userData.userRecord = {
       userId: record.id,
       firstName: record.firstName,
       lastName: record.lastName,
@@ -103,7 +103,7 @@ async function authorizeAgency(req, res, next) {
     userData.userRole = { title: userRecord[0].title }
 
     if (userRecord[0].title == 'agency') {
-      req.session.userSession = userData
+      req.session = userData
       next()
     } else res.fail({ code: 400, error: { message: 'UnAuthorize' } })
   } catch (err) {

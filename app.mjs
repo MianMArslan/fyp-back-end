@@ -7,7 +7,7 @@ import helmet from 'helmet'
 import path from 'path'
 const __dirname = path.resolve()
 import cookieParser from 'cookie-parser'
-import session from 'express-session'
+// import session from 'express-session'
 import logger from 'morgan'
 import { JSend } from 'jsend-express'
 import 'express-async-errors'
@@ -27,7 +27,7 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
-app.use(session({ secret: process.env.SECRET }))
+// app.use(session({ secret: process.env.SECRET }))
 app.use(helmet())
 app.use(cors(corsOptions))
 app.use(express.static(path.join(__dirname, 'public')))
