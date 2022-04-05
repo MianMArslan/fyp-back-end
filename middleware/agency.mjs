@@ -11,11 +11,13 @@ function validateMarkUnActive(req, res, next) {
   next()
 }
 function validateCreateAd(req, res, next) {
+  console.log(req.body)
   const schema = Joi.object({
     briefdescription: Joi.string().required(),
     actualamount: Joi.number().required(),
     discountamount: Joi.number().required(),
-    phonenumber: Joi.number().required()
+    phonenumber: Joi.number().required(),
+    Destination: Joi.string().required()
   })
   const { error } = schema.validate(req.body)
   if (error) return res.fail({ error })

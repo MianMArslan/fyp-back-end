@@ -4,8 +4,13 @@ const { ads } = db
 async function createAd(req, res, next) {
   let imageUrl = process.env.PINATA_DISPLAY + req.IpfsHash
   try {
-    const { briefdescription, actualamount, discountamount, phonenumber } =
-      req.body
+    const {
+      briefdescription,
+      actualamount,
+      discountamount,
+      phonenumber,
+      Destination
+    } = req.body
     const userId = req.session.userRecord.userId
     let record = await ads.create({
       userId,
@@ -15,9 +20,10 @@ async function createAd(req, res, next) {
       description: briefdescription,
       discount: discountamount,
       phone: phonenumber,
+      description: Destination,
       isDeleted: false
     })
-    res.success({ data: record })
+    res.success({ message: 'Successful', data: record })
   } catch (error) {
     httpError(error.message)
   }
