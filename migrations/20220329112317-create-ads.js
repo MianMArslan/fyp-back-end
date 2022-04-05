@@ -14,14 +14,26 @@ module.exports = {
       discount: {
         type: Sequelize.INTEGER
       },
+      userId: {
+        type: Sequelize.INTEGER
+      },
       phone: {
         type: Sequelize.STRING
       },
-      email: {
+      amount: {
         type: Sequelize.STRING
       },
-      city: {
+      active: {
+        type: Sequelize.BOOLEAN
+      },
+      description: {
+        type: Sequelize.String
+      },
+      destination: {
         type: Sequelize.STRING
+      },
+      isDeleted: {
+        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,

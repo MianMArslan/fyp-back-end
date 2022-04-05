@@ -16,8 +16,12 @@ module.exports = (sequelize, DataTypes) => {
       imageUrl: DataTypes.STRING,
       discount: DataTypes.INTEGER,
       phone: DataTypes.STRING,
-      email: DataTypes.STRING,
-      city: DataTypes.STRING
+      description: DataTypes.STRING,
+      destination: DataTypes.STRING,
+      active: DataTypes.BOOLEAN,
+      userId: DataTypes.INTEGER,
+      amount: DataTypes.INTEGER,
+      isDeleted: DataTypes.BOOLEAN
     },
     {
       sequelize,
