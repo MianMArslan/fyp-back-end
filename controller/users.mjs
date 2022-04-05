@@ -63,6 +63,16 @@ async function getUsers(req, res) {
   }
 }
 
+async function getUserBYid(req, res) {
+  try {
+    const userId = req.session.userRecord.userId
+    const record = await user.findOne({ where: { id: userId } })
+    return res.success({ data: record })
+  } catch (error) {
+    return httpError(error.message)
+  }
+}
+
 async function updateUser(req, res) {
   const { id, firstName, lastName, roleIds } = req.body
   let object = {},
@@ -73,7 +83,7 @@ async function updateUser(req, res) {
   if (object) {
     try {
       await user.update(object, { where })
-      return res.status(201).success({
+      return res.status(200).success({
         status: users.status,
         message: users.userUpdated,
         data: users.data
@@ -108,4 +118,11 @@ async function verifyRole(req, res, next) {
   return res.success({ message: 'Email verify Successfully', data: verify })
 }
 
-export { createUsers, verifyRole, getUsers, updateUser, deleteUser }
+export {
+  createUsers,
+  verifyRole,
+  getUsers,
+  updateUser,
+  deleteUser,
+  getUserBYid
+}
