@@ -32,7 +32,7 @@ router.post(
   '/login',
   validateLogin,
   getUserLocationData,
-  getUserLocationDetails,
+  // getUserLocationDetails,
   login
 )
 router.post('/forgot-password', validateEmail, verifyEmail, forgotPassword)

@@ -89,7 +89,7 @@ async function login(req, res) {
       where: { userId: record.id }
     })
 
-    const { latitude, longitude, ipAddress } = req.locationDetails
+    const { latitude, longitude, ip } = req.locationDetail
 
     if (!locationRecord)
       await location.create({ userId: record.id, latitude, longitude })
@@ -102,7 +102,7 @@ async function login(req, res) {
       userId: record.id,
       lat: latitude,
       long: longitude,
-      ipAddress
+      ipAddress: ip
     })
     return res.success({
       status: auth.status,

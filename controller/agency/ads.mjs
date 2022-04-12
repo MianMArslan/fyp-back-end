@@ -53,4 +53,18 @@ async function markUnActive(req, res, next) {
   }
 }
 
-export { createAd, getAds, markUnActive }
+async function deleteAds(req, res, next) {
+  try {
+    const { id } = req.body
+    const userId = req.session.userRecord.userId
+    let record = await ads.update(
+      { isDeleted: true },
+      { where: { userId, id } }
+    )
+    res.success({ message: 'Successful', data: record })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
+export { createAd, getAds, markUnActive, deleteAds }

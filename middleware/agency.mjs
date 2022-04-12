@@ -10,6 +10,14 @@ function validateMarkUnActive(req, res, next) {
   if (error) return res.fail({ error })
   next()
 }
+function validateDelateAds(req, res, next) {
+  const schema = Joi.object({
+    id: Joi.number().required()
+  })
+  const { error } = schema.validate(req.body)
+  if (error) return res.fail({ error })
+  next()
+}
 function validateCreateAd(req, res, next) {
   console.log(req.body)
   const schema = Joi.object({
@@ -24,4 +32,4 @@ function validateCreateAd(req, res, next) {
   next()
 }
 
-export { validateMarkUnActive, validateCreateAd }
+export { validateMarkUnActive, validateCreateAd, validateDelateAds }
