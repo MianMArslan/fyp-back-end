@@ -14,8 +14,9 @@ function validateDelateAds(req, res, next) {
   const schema = Joi.object({
     id: Joi.number().required()
   })
-  const { error } = schema.validate(req.body)
+  const { error, value } = schema.validate(req.params)
   if (error) return res.fail({ error })
+  req.query = value
   next()
 }
 function validateCreateAd(req, res, next) {

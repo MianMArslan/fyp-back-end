@@ -65,7 +65,9 @@ async function registration(req, res) {
 }
 
 async function login(req, res) {
-  const { email, password } = req.body
+  const { email, password, latitude, longitude } = req.body
+  // console.log(req.body)
+  // return
   let userData = {}
   try {
     let hashPassword = await bcrypt.hash(password, process.env.SALT)
@@ -89,7 +91,7 @@ async function login(req, res) {
       where: { userId: record.id }
     })
 
-    const { latitude, longitude, ip } = req.locationDetail
+    const { ip } = req.locationDetail
 
     if (!locationRecord)
       await location.create({ userId: record.id, latitude, longitude })

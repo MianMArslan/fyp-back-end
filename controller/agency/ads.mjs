@@ -20,7 +20,7 @@ async function createAd(req, res, next) {
       description: briefdescription,
       discount: discountamount,
       phone: phonenumber,
-      description: Destination,
+      destination: Destination,
       isDeleted: false
     })
     res.success({ message: 'Successful', data: record })
@@ -55,7 +55,7 @@ async function markUnActive(req, res, next) {
 
 async function deleteAds(req, res, next) {
   try {
-    const { id } = req.body
+    const { id } = req.query
     const userId = req.session.userRecord.userId
     let record = await ads.update(
       { isDeleted: true },

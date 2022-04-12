@@ -13,6 +13,7 @@ import {
   validateCreateAd,
   validateDelateAds
 } from '../middleware/agency.mjs'
+import { changePassword } from '../common/changePassword.mjs'
 const router = express.Router()
 
 router.post(
@@ -23,8 +24,9 @@ router.post(
   validateCreateAd,
   createAd
 )
+router.post('/changePassword', authorizeAgency, changePassword)
 router.get('/', authorizeAgency, getAds)
 router.put('/active', authorizeAgency, validateMarkUnActive, markUnActive)
-router.delete('/', authorizeAgency, validateDelateAds, deleteAds)
+router.delete('/:id', authorizeAgency, validateDelateAds, deleteAds)
 
 export default router
