@@ -20,7 +20,6 @@ function validateDelateAds(req, res, next) {
   next()
 }
 function validateCreateAd(req, res, next) {
-  console.log(req.body)
   const schema = Joi.object({
     briefdescription: Joi.string().required(),
     actualamount: Joi.number().required(),
@@ -33,4 +32,22 @@ function validateCreateAd(req, res, next) {
   next()
 }
 
-export { validateMarkUnActive, validateCreateAd, validateDelateAds }
+function validateUpdateAd(req, res, next) {
+  const schema = Joi.object({
+    description: Joi.string().required(),
+    amount: Joi.number().required(),
+    discount: Joi.number().required(),
+    phone: Joi.number().required(),
+    id: Joi.number().required()
+  })
+  const { error } = schema.validate(req.body)
+  if (error) return res.fail({ error })
+  next()
+}
+
+export {
+  validateMarkUnActive,
+  validateCreateAd,
+  validateDelateAds,
+  validateUpdateAd
+}

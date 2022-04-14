@@ -3,7 +3,8 @@ import {
   createAd,
   getAds,
   markUnActive,
-  deleteAds
+  deleteAds,
+  updateAd
 } from '../controller/agency/ads.mjs'
 import { verificationImage } from '../middleware/uploader.mjs'
 import { pinataUpload } from '../middleware/pinata.mjs'
@@ -11,7 +12,8 @@ import { authorizeAgency } from '../middleware/token.mjs'
 import {
   validateMarkUnActive,
   validateCreateAd,
-  validateDelateAds
+  validateDelateAds,
+  validateUpdateAd
 } from '../middleware/agency.mjs'
 import { changePassword } from '../common/changePassword.mjs'
 const router = express.Router()
@@ -27,6 +29,7 @@ router.post(
 router.post('/changePassword', authorizeAgency, changePassword)
 router.get('/', authorizeAgency, getAds)
 router.put('/active', authorizeAgency, validateMarkUnActive, markUnActive)
+router.put('/', authorizeAgency, validateUpdateAd, updateAd)
 router.delete('/:id', authorizeAgency, validateDelateAds, deleteAds)
 
 export default router

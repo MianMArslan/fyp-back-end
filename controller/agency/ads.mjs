@@ -67,4 +67,23 @@ async function deleteAds(req, res, next) {
   }
 }
 
-export { createAd, getAds, markUnActive, deleteAds }
+async function updateAd(req, res, next) {
+  try {
+    const { amount, description, discount, phone, id } = req.body
+    const userId = req.session.userRecord.userId
+    let record = await ads.update(
+      {
+        amount,
+        description,
+        discount,
+        phone
+      },
+      { where: { id, userId } }
+    )
+    res.success({ message: 'Successful', data: record })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
+export { createAd, getAds, markUnActive, deleteAds, updateAd }
