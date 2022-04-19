@@ -44,10 +44,10 @@ async function markUnActive(req, res, next) {
     const { active, id } = req.body
     const userId = req.session.userRecord.userId
     let record = await ads.update(
-      { active },
+      { active: !active },
       { where: { userId, isDeleted: false, id } }
     )
-    res.success({ message: 'Successful', data: record })
+    res.success({ message: 'Status Update Successfully', data: record })
   } catch (error) {
     httpError(error.message)
   }
