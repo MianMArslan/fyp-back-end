@@ -16,6 +16,7 @@ module.exports = {
             '$2b$10$dX9jrxWEv8VQQn82uaowKeZiW4sMBGBAyi5y2oUX9O.A0Iy4g.lhu',
           isVerified: 'email',
           isDeleted: false,
+          interest: 'Others',
           createdAt: new Date(),
           updatedAt: new Date()
         }

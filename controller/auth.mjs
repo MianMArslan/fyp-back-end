@@ -7,11 +7,12 @@ import { httpError } from '../common/httpError.mjs'
 import { isVerified, auth, Email } from '../common/constants.mjs'
 import jwtDecode from 'jwt-decode'
 import { accessToken } from '../middleware/token.mjs'
-import { getIp } from '../middleware/getIP.mjs'
+import ejs from 'ejs'
+import path from 'path'
 const { user, sequelize, location, locationLog } = db
 
 async function registration(req, res) {
-  const { firstName, lastName, email, password, roleId } = req.body
+  const { firstname, lastname, email, password, roleId, interest } = req.body
   let hashPassword
   const t = await sequelize.transaction()
   try {
@@ -20,10 +21,11 @@ async function registration(req, res) {
       hashPassword = await bcrypt.hash(password, process.env.SALT)
       const record = await user.create(
         {
-          firstName: firstName,
-          lastName: lastName,
+          firstName: firstname,
+          lastName: lastname,
           email: email,
-          password: hashPassword
+          password: hashPassword,
+          interest
         },
         { transaction: t }
       )
@@ -32,15 +34,21 @@ async function registration(req, res) {
         const token = getAuthToken(email)
         const to = email
         const subject = 'Verify Your Email'
-        const html = ' Hello '
-          .concat(` , <br /></br > We receive your request for Signup. 
-                    <br /> Here is the link for Verification :
-                    <a href="http://localhost:400/verify?token=${token}"> 
-                    Click here to verify your email </a> <br />
-                    This link is expire after 15 minutes<br /> Best Regards.`)
+        const __dirname = path.resolve()
+        const resetPasswordTemplate = `${__dirname}/views/template.ejs`
+        const logoLink = `./banner.png`
+        let html = await ejs.renderFile(resetPasswordTemplate, {
+          token: `http://localhost:3000/emailMessage?token=${token}`,
+          logoLink,
+          user: 'aaa',
+          header: 'Trouble signing in?',
+          button: `Verify Email`,
+          hiddenHeader: 'abc',
+          footer: `You received this email because you requested to create account. If you did not,please contact`
+        })
         await sendEmail(to, subject, html)
         await t.commit()
-        const status = 201
+        const status = 200
         const message =
           'Email is Successfully send kindly verify your email with in 15 minutes '
         return res.status(200).success({ status, message })
@@ -57,13 +65,17 @@ async function registration(req, res) {
 }
 
 async function login(req, res) {
-  const { email, password } = req.body
+  const { email, password, latitude, longitude } = req.body
+  // console.log(req.body)
+  // return
   let userData = {}
   try {
     let hashPassword = await bcrypt.hash(password, process.env.SALT)
     const record = await user.findOne({
       where: { email: email, password: hashPassword }
     })
+    if (!record) return res.fail({ error: { message: auth.inValid } })
+    if (record.isVerified == isVerified.NO) return httpError(auth.notVerified)
     userData.UserRecord = {
       userId: record.id,
       firstName: record.firstName,
@@ -72,17 +84,14 @@ async function login(req, res) {
     }
     const userRecord = await record.getRoles()
     userData.userRole = { title: userRecord[0].title }
-    if (!record) return res.fail({ error: auth.inValid })
-    if (record.isVerified == isVerified.NO) return httpError(auth.notVerified)
     const token = await accessToken(record.id, record.email)
     res.cookie('accessToken', token)
-    req.session.userSession = userData
 
     const locationRecord = await location.findOne({
       where: { userId: record.id }
     })
 
-    const { latitude, longitude, ipAddress } = req.locationDetails
+    const { ip } = req.locationDetail
 
     if (!locationRecord)
       await location.create({ userId: record.id, latitude, longitude })
@@ -95,7 +104,7 @@ async function login(req, res) {
       userId: record.id,
       lat: latitude,
       long: longitude,
-      ipAddress
+      ipAddress: ip
     })
     return res.success({
       status: auth.status,
@@ -111,9 +120,18 @@ async function forgotPassword(req, res) {
   const { email } = req.body
   const token = getToken(email)
   const to = `${email}`
-  const html = ' Hello '
-    .concat(` , <br /></br > We receive your request to Reset Password. <br /> Here is the link for resetting your password :
-      <a href="http://localhost:400/verify?token=${token}"> Click here to reset your password </a> <br /><br /> Best Regards.`)
+  const __dirname = path.resolve()
+  const resetPasswordTemplate = `${__dirname}/views/template.ejs`
+  const logoLink = `./banner.png`
+  let html = await ejs.renderFile(resetPasswordTemplate, {
+    token: `http://localhost:3000/resetPassword?token=${token}`,
+    logoLink,
+    user: 'We receive your request to Reset Password.',
+    header: 'Trouble signing in?',
+    button: `Reset Password`,
+    hiddenHeader: 'abc',
+    footer: `You received this email because you requested to create account. If you did not,please contact`
+  })
   try {
     await sendEmail(to, auth.subjectForgotPassword, html)
     return res.success({
@@ -144,12 +162,19 @@ async function resendEmailLink(req, res, next) {
   const { email } = req.body
   const token = getAuthToken(email)
   const to = email
-  const html = ' Hello '
-    .concat(` , <br /></br > We receive your request for generating verification link. 
-                    <br /> Here is the link for Verification :
-                    <a href="http://localhost:400/verify?token=${token}"> 
-                    Click here to verify your email </a> <br />
-                    This link is expire after 15 minutes<br /> Best Regards.`)
+  const subject = 'Activate Your Account'
+  const __dirname = path.resolve()
+  const resetPasswordTemplate = `${__dirname}/views/template.ejs`
+  const logoLink = `./banner.png`
+  let html = await ejs.renderFile(resetPasswordTemplate, {
+    token: `http://localhost:3000/emailMessage?token=${token}`,
+    logoLink,
+    user: 'aaa',
+    header: 'Trouble signing in?',
+    button: `Verify Email`,
+    hiddenHeader: 'abc',
+    footer: `You received this email because you requested to create account. If you did not,please contact`
+  })
   try {
     await sendEmail(to, auth.subjectResend, html)
     return res.success({ message: auth.messageResend })

@@ -2,9 +2,9 @@ import nodemailer from 'nodemailer'
 import db from '../models/index.js'
 import _ from 'lodash'
 
-const { users, roles } = db
+const { user, roles } = db
 
-function sendEmail(to, subject, html) {
+async function sendEmail(to, subject, html) {
   let transport = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -32,7 +32,7 @@ async function verifyEmail(req, res, next) {
   const { email } = req.body
   const error = new Error('Enter Valid Email')
   try {
-    const checker = await users.findOne({ where: { email: email } })
+    const checker = await user.findOne({ where: { email: email } })
     if (_.isEmpty(checker)) return res.fail({ error })
     next()
   } catch (error) {
@@ -44,7 +44,7 @@ async function findUser(req, res, next) {
   const { id } = req.body
   const error = new Error('Enter Valid ID')
   try {
-    const checker = await users.findOne({ where: { id, isDeleted: false } })
+    const checker = await user.findOne({ where: { id, isDeleted: false } })
     if (_.isEmpty(checker)) return res.fail({ error })
     next()
   } catch (error) {
