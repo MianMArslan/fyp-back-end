@@ -1,6 +1,8 @@
 import db from '../../models/index.js'
 import { httpError } from '../../common/httpError.mjs'
+import { createNotification } from '../notification.mjs'
 const { ads } = db
+
 async function createAd(req, res, next) {
   let imageUrl = process.env.PINATA_DISPLAY + req.IpfsHash
   try {
@@ -23,6 +25,7 @@ async function createAd(req, res, next) {
       destination: Destination,
       isDeleted: false
     })
+    await createNotification('New ad created', 'adsCreate', 'admin', userId)
     res.success({ message: 'Successful', data: record })
   } catch (error) {
     httpError(error.message)

@@ -1,11 +1,17 @@
 import db from '../models/index.js'
 import { httpError } from '../common/httpError.mjs'
 
-const { notification } = db
+const { notification, user, role } = db
 
 async function createNotification(message, type, receiverType, userId) {
   try {
-    let result = await notification.create(message, type, receiverType, userId)
+    let result = await notification.create({
+      message,
+      type,
+      receiverType,
+      userId,
+      isRead: false
+    })
     if (result) return true
   } catch (error) {
     httpError(error.message)
@@ -15,12 +21,12 @@ async function createNotification(message, type, receiverType, userId) {
 async function getNotification(req, res, next) {
   try {
     const { isRead } = req.query
-    const userId = req.session.userRecord.userId
+    const receiverId = req.session.userRecord.userId
     const receiverType = req.session.userRole.title
     let result = await notification.findAndCountAll({
-      where: { receiverType, userId, isRead }
+      where: { receiverType, receiverId, isRead }
     })
-    res.success({ message: true, data: result })
+    res.success({ data: result })
   } catch (error) {
     httpError(error.message)
   }
@@ -29,11 +35,10 @@ async function getNotification(req, res, next) {
 async function updateNotificationStatus(req, res, next) {
   try {
     const { id } = req.body
-    const userId = req.session.userRecord.userId
     let result = await notification.update(
       { isRead: true },
       {
-        where: { id, userId }
+        where: { id }
       }
     )
     res.success({ message: true, data: result })
@@ -45,14 +50,32 @@ async function updateNotificationStatus(req, res, next) {
 async function deleteReadNotification(req, res, next) {
   try {
     const receiverType = req.session.userRole.title
-    const userId = req.session.userRecord.userId
+    const { id } = req.body
     let result = await notification.update(
       { isDeleted: true },
       {
-        where: { receiverType, userId, isRead: true }
+        where: { receiverType, id }
       }
     )
     if (result) return true
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
+async function getNotificationForAdmin(req, res, next) {
+  try {
+    const { isRead } = req.query
+    console.log(
+      '🚀 ~ file: notification.mjs ~ line 70 ~ getNotificationForAdmin ~ isRead',
+      isRead
+    )
+    const receiverType = req.session.userRole.title
+    let result = await notification.findAndCountAll({
+      where: { receiverType, isRead },
+      include: { model: user, include: { model: role } }
+    })
+    res.success({ data: result })
   } catch (error) {
     httpError(error.message)
   }
@@ -62,5 +85,6 @@ export {
   createNotification,
   getNotification,
   updateNotificationStatus,
-  deleteReadNotification
+  deleteReadNotification,
+  getNotificationForAdmin
 }

@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      this.belongsTo(models.user, { foreignKey: 'userId', sourceKey: 'id' })
     }
   }
   notification.init(
@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('newUser', 'adsCreate', 'booking', 'documents'),
       receiverType: DataTypes.ENUM('admin', 'agency', 'tourist'),
       userId: DataTypes.INTEGER,
+      receiverId: DataTypes.INTEGER,
       isRead: DataTypes.BOOLEAN
     },
     {

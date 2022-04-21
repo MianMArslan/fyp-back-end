@@ -20,6 +20,9 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER
       },
+      receiverId: {
+        type: Sequelize.INTEGER
+      },
       isRead: {
         type: Sequelize.BOOLEAN
       },
