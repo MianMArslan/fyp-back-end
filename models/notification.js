@@ -16,7 +16,8 @@ module.exports = (sequelize, DataTypes) => {
       message: DataTypes.STRING,
       type: DataTypes.ENUM('newUser', 'adsCreate', 'booking', 'documents'),
       receiverType: DataTypes.ENUM('admin', 'agency', 'tourist'),
-      userId: DataTypes.INTEGER
+      userId: DataTypes.INTEGER,
+      isRead: DataTypes.BOOLEAN
     },
     {
       sequelize,
