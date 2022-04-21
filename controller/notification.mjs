@@ -14,9 +14,10 @@ async function createNotification(message, type, receiverType, userId) {
 
 async function getNotification(req, res, next) {
   try {
-    const { receiverType, isRead } = req.query
+    const { isRead } = req.query
     const userId = req.session.userRecord.userId
-    let result = await notification.FindAndCountAll({
+    const receiverType = req.session.userRole.title
+    let result = await notification.findAndCountAll({
       where: { receiverType, userId, isRead }
     })
     res.success({ message: true, data: result })
@@ -43,7 +44,7 @@ async function updateNotificationStatus(req, res, next) {
 
 async function deleteReadNotification(req, res, next) {
   try {
-    const { receiverType } = req.query
+    const receiverType = req.session.userRole.title
     const userId = req.session.userRecord.userId
     let result = await notification.update(
       { isDeleted: true },
