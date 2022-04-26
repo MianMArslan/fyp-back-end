@@ -1,6 +1,8 @@
 import db from '../../models/index.js'
 import { httpError } from '../../common/httpError.mjs'
+import { createNotification } from '../notification.mjs'
 const { ads } = db
+
 async function createAd(req, res, next) {
   let imageUrl = process.env.PINATA_DISPLAY + req.IpfsHash
   try {
@@ -23,6 +25,7 @@ async function createAd(req, res, next) {
       destination: Destination,
       isDeleted: false
     })
+    await createNotification('New ad created', 'adsCreate', 'admin', userId)
     res.success({ message: 'Successful', data: record })
   } catch (error) {
     httpError(error.message)
@@ -86,4 +89,23 @@ async function updateAd(req, res, next) {
   }
 }
 
-export { createAd, getAds, markUnActive, deleteAds, updateAd }
+async function getCount(req, res, next) {
+  try {
+    let countActive = {}
+    let count = {}
+    const userId = req.session.userRecord.userId
+    let record = await ads.count({
+      where: { userId, isDeleted: false, active: true }
+    })
+    let recordFalse = await ads.count({
+      where: { userId, isDeleted: false, active: false }
+    })
+    countActive.active = record
+    count.inActive = recordFalse
+    res.success({ message: 'Successful', data: [countActive, count] })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
+export { createAd, getAds, markUnActive, deleteAds, updateAd, getCount }

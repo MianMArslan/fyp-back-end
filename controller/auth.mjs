@@ -9,6 +9,7 @@ import jwtDecode from 'jwt-decode'
 import { accessToken } from '../middleware/token.mjs'
 import ejs from 'ejs'
 import path from 'path'
+import { createNotification } from './notification.mjs'
 const { user, sequelize, location, locationLog } = db
 
 async function registration(req, res) {
@@ -48,6 +49,12 @@ async function registration(req, res) {
         })
         await sendEmail(to, subject, html)
         await t.commit()
+        await createNotification(
+          'New User register',
+          'newUser',
+          'admin',
+          record.id
+        )
         const status = 200
         const message =
           'Email is Successfully send kindly verify your email with in 15 minutes '
