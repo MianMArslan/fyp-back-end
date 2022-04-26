@@ -1,7 +1,8 @@
 import db from '../../models/index.js'
 import { httpError } from '../../common/httpError.mjs'
 import { createNotification } from '../notification.mjs'
-const { ads } = db
+const { ads, Sequelize } = db
+const Op = Sequelize.Op
 
 async function createAd(req, res, next) {
   let imageUrl = process.env.PINATA_DISPLAY + req.IpfsHash

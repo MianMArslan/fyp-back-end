@@ -4,8 +4,10 @@ import _ from 'lodash'
 import jwt_decode from 'jwt-decode'
 import { users } from '../common/constants.mjs'
 import { httpError } from '../common/httpError.mjs'
+import moment from 'moment'
 
-const { user, sequelize, role } = db
+const { user, sequelize, role, Sequelize } = db
+const Op = Sequelize.Op
 
 async function createUsers(req, res, next) {
   const { firstName, lastName, email, password, roleId } = req.body
@@ -140,6 +142,25 @@ async function getAgencyCount(req, res) {
   }
 }
 
+async function getNewJoinTourists(req, res) {
+  try {
+    const record = await user.findAll({
+      limit: 5,
+      order: [['createdAt', 'DESC']],
+      subQuery: false,
+      include: [
+        {
+          model: role,
+          where: { title: 'tourist' }
+        }
+      ]
+    })
+    return res.success({ data: record })
+  } catch (error) {
+    return httpError(error.message)
+  }
+}
+
 export {
   createUsers,
   verifyRole,
@@ -148,5 +169,6 @@ export {
   deleteUser,
   getUserBYid,
   getTouristCount,
-  getAgencyCount
+  getAgencyCount,
+  getNewJoinTourists
 }
