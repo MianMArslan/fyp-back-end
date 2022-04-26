@@ -5,7 +5,7 @@ import jwt_decode from 'jwt-decode'
 import { users } from '../common/constants.mjs'
 import { httpError } from '../common/httpError.mjs'
 
-const { user, sequelize } = db
+const { user, sequelize, role } = db
 
 async function createUsers(req, res, next) {
   const { firstName, lastName, email, password, roleId } = req.body
@@ -118,11 +118,35 @@ async function verifyRole(req, res, next) {
   return res.success({ message: 'Email verify Successfully', data: verify })
 }
 
+async function getTouristCount(req, res) {
+  try {
+    const record = await user.count({
+      include: { model: role, where: { title: 'tourist' } }
+    })
+    return res.success({ data: record })
+  } catch (error) {
+    return httpError(error.message)
+  }
+}
+
+async function getAgencyCount(req, res) {
+  try {
+    const record = await user.count({
+      include: { model: role, where: { title: 'agency' } }
+    })
+    return res.success({ data: record })
+  } catch (error) {
+    return httpError(error.message)
+  }
+}
+
 export {
   createUsers,
   verifyRole,
   getUsers,
   updateUser,
   deleteUser,
-  getUserBYid
+  getUserBYid,
+  getTouristCount,
+  getAgencyCount
 }
