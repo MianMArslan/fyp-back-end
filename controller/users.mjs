@@ -44,21 +44,10 @@ async function createUsers(req, res, next) {
   }
 }
 
-async function getUsers(req, res) {
-  const { limit, offset, isDeleted } = req.query
-  let object = {},
-    where = {}
-  if (isDeleted || isDeleted == false) {
-    where.isDeleted = isDeleted
-    object.where = where
-  }
-  if (limit) object.limit = limit
-  if (offset || offset == 0) object.offset = offset
-  console.log('==================')
-  // console.log(req.session)
-  return
+async function getAllUsers(req, res) {
   try {
-    const records = await user.findAndCountAll()
+    const { isDeleted } = req.query
+    const records = await user.findAll({ where: { isDeleted } })
     return res.success({ data: records })
   } catch (error) {
     return httpError(error.message)
@@ -164,7 +153,7 @@ async function getNewJoinTourists(req, res) {
 export {
   createUsers,
   verifyRole,
-  getUsers,
+  getAllUsers,
   updateUser,
   deleteUser,
   getUserBYid,
