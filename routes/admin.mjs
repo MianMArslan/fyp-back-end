@@ -10,6 +10,8 @@ import {
   validateGetNotification,
   validateUpdateNotificationStatus
 } from '../middleware/notification.mjs'
+import { getNewJoinTourists } from '../controller/users.mjs'
+import { getNewAds } from '../controller/agency/ads.mjs'
 
 const router = express.Router()
 router.get(
@@ -19,11 +21,13 @@ router.get(
   getNotificationForAdmin
 )
 router.put(
-  '/notification',
+  '/notificationStatus',
   authorizeAdmin,
   validateUpdateNotificationStatus,
   updateNotificationStatus
 )
 router.delete('/notification', authorizeAdmin, deleteReadNotification)
+router.get('/newJoin', authorizeAdmin, getNewJoinTourists)
+router.get('/newAds', authorizeAdmin, getNewAds)
 
 export default router

@@ -8,8 +8,7 @@ import {
   deleteUser,
   getUserBYid,
   getTouristCount,
-  getAgencyCount,
-  getNewJoinTourists
+  getAgencyCount
 } from '../controller/users.mjs'
 import { findUser, verifyRoles } from '../middleware/common.mjs'
 import { authorizeAgency, authorizeAdmin } from '../middleware/token.mjs'
@@ -21,7 +20,6 @@ router.delete('/', deleteUser)
 
 router.get('/touristCount', authorizeAdmin, getTouristCount)
 router.get('/agencyCount', authorizeAdmin, getAgencyCount)
-router.get('/newJoin', authorizeAdmin, getNewJoinTourists)
 router.get('/', authorizeAdmin, validate, getAllUsers)
 
 export default router

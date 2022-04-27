@@ -66,10 +66,6 @@ async function deleteReadNotification(req, res, next) {
 async function getNotificationForAdmin(req, res, next) {
   try {
     const { isRead } = req.query
-    console.log(
-      '🚀 ~ file: notification.mjs ~ line 70 ~ getNotificationForAdmin ~ isRead',
-      isRead
-    )
     const receiverType = req.session.userRole.title
     let result = await notification.findAndCountAll({
       where: { receiverType, isRead },

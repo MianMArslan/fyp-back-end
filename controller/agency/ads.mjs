@@ -1,7 +1,7 @@
 import db from '../../models/index.js'
 import { httpError } from '../../common/httpError.mjs'
 import { createNotification } from '../notification.mjs'
-const { ads, Sequelize } = db
+const { ads, Sequelize, user, role } = db
 const Op = Sequelize.Op
 
 async function createAd(req, res, next) {
@@ -109,4 +109,25 @@ async function getCount(req, res, next) {
   }
 }
 
-export { createAd, getAds, markUnActive, deleteAds, updateAd, getCount }
+async function getNewAds(req, res) {
+  try {
+    const record = await ads.findAll({
+      limit: 4,
+      order: [['createdAt', 'DESC']],
+      where: { isDeleted: false }
+    })
+    return res.success({ data: record })
+  } catch (error) {
+    return httpError(error.message)
+  }
+}
+
+export {
+  createAd,
+  getAds,
+  markUnActive,
+  deleteAds,
+  updateAd,
+  getCount,
+  getNewAds
+}
