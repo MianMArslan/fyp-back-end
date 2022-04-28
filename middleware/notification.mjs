@@ -20,4 +20,17 @@ function validateUpdateNotificationStatus(req, res, next) {
   next()
 }
 
-export { validateGetNotification, validateUpdateNotificationStatus }
+function validateDeleteNotification(req, res, next) {
+  const schema = Joi.object({
+    receiverId: Joi.number().required()
+  })
+  const { error } = schema.validate(req.query)
+  if (error) return res.fail({ error })
+  next()
+}
+
+export {
+  validateGetNotification,
+  validateUpdateNotificationStatus,
+  validateDeleteNotification
+}

@@ -24,7 +24,8 @@ async function getNotification(req, res, next) {
     const receiverId = req.session.userRecord.userId
     const receiverType = req.session.userRole.title
     let result = await notification.findAndCountAll({
-      where: { receiverType, receiverId, isRead }
+      where: { receiverType, receiverId, isRead },
+      include: { model: user }
     })
     res.success({ data: result })
   } catch (error) {
@@ -41,7 +42,7 @@ async function updateNotificationStatus(req, res, next) {
         where: { id }
       }
     )
-    res.success({ message: true, data: result })
+    res.success({ data: result })
   } catch (error) {
     httpError(error.message)
   }
@@ -49,15 +50,13 @@ async function updateNotificationStatus(req, res, next) {
 
 async function deleteReadNotification(req, res, next) {
   try {
+    console.log('testingDelete')
     const receiverType = req.session.userRole.title
-    const { id } = req.body
-    let result = await notification.update(
-      { isDeleted: true },
-      {
-        where: { receiverType, id }
-      }
-    )
-    if (result) return true
+    const { receiverId } = req.query
+    let result = await notification.destroy({
+      where: { receiverType, receiverId, isRead: true }
+    })
+    if (result) res.success({ message: true, data: true })
   } catch (error) {
     httpError(error.message)
   }
