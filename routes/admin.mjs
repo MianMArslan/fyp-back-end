@@ -21,7 +21,7 @@ router.get(
   getNotificationForAdmin
 )
 router.put(
-  '/notificationStatus',
+  '/notification',
   authorizeAdmin,
   validateUpdateNotificationStatus,
   updateNotificationStatus

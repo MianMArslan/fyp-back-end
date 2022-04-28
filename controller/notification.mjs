@@ -50,11 +50,12 @@ async function updateNotificationStatus(req, res, next) {
 
 async function deleteReadNotification(req, res, next) {
   try {
-    console.log('testingDelete')
     const receiverType = req.session.userRole.title
     const { receiverId } = req.query
+    let where = { isRead: true, receiverType }
+    if (receiverId) where.receiverId = receiverId
     let result = await notification.destroy({
-      where: { receiverType, receiverId, isRead: true }
+      where
     })
     if (result) res.success({ message: true, data: true })
   } catch (error) {
