@@ -27,6 +27,7 @@ import {
   validateUpdateNotificationStatus,
   validateDeleteNotification
 } from '../middleware/notification.mjs'
+import { getUserBYid } from '../controller/users.mjs'
 
 const router = express.Router()
 
@@ -49,6 +50,8 @@ router.get(
   validateGetNotification,
   getNotification
 )
+router.get('/id', authorizeAgency, getUserBYid)
+
 router.put(
   '/notification',
   authorizeAgency,
