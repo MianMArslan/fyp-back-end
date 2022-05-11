@@ -1,7 +1,7 @@
 import db from '../models/index.js'
 import { httpError } from '../common/httpError.mjs'
 
-const { user, role, location, Sequelize } = db
+const { user, role, location, Sequelize, ads } = db
 const Op = Sequelize.Op
 import { distance } from '../common/distance.mjs'
 
@@ -48,4 +48,13 @@ async function getNearestTourist(req, res, next) {
   }
 }
 
-export { getNearestTourist }
+async function getAds(req, res, next) {
+  try {
+    let record = await ads.findAll({ where: { isDeleted: false } })
+    res.success({ message: 'Successful', data: record })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
+export { getNearestTourist, getAds }
