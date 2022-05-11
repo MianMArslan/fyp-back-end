@@ -41,7 +41,7 @@ async function authorizeTourist(req, res, next) {
     jwt.verify(accessToken, process.env.SECRET)
     const decode = jwt_decode(accessToken)
     const record = await user.findOne({ where: { email: decode.email } })
-    userData.UserRecord = {
+    userData.userRecord = {
       userId: record.id,
       firstName: record.firstName,
       lastName: record.lastName,
@@ -67,7 +67,7 @@ async function authorizeAdmin(req, res, next) {
     jwt.verify(accessToken, process.env.SECRET)
     const decode = jwt_decode(accessToken)
     const record = await user.findOne({ where: { email: decode.email } })
-    userData.UserRecord = {
+    userData.userRecord = {
       userId: record.id,
       firstName: record.firstName,
       lastName: record.lastName,
