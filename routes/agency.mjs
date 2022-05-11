@@ -24,7 +24,8 @@ import {
 } from '../controller/notification.mjs'
 import {
   validateGetNotification,
-  validateUpdateNotificationStatus
+  validateUpdateNotificationStatus,
+  validateDeleteNotification
 } from '../middleware/notification.mjs'
 
 const router = express.Router()
@@ -42,7 +43,6 @@ router.get('/', authorizeAgency, getAds)
 router.get('/count', authorizeAgency, getCount)
 router.put('/active', authorizeAgency, validateMarkUnActive, markUnActive)
 router.put('/', authorizeAgency, validateUpdateAd, updateAd)
-router.delete('/:id', authorizeAgency, validateDelateAds, deleteAds)
 router.get(
   '/notification',
   authorizeAgency,
@@ -55,6 +55,12 @@ router.put(
   validateUpdateNotificationStatus,
   updateNotificationStatus
 )
-router.delete('/notification', authorizeAgency, deleteReadNotification)
+router.delete(
+  '/notification',
+  authorizeAgency,
+  validateDeleteNotification,
+  deleteReadNotification
+)
+router.delete('/:id', authorizeAgency, validateDelateAds, deleteAds)
 
 export default router

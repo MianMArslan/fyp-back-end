@@ -4,8 +4,10 @@ import _ from 'lodash'
 import jwt_decode from 'jwt-decode'
 import { users } from '../common/constants.mjs'
 import { httpError } from '../common/httpError.mjs'
+import moment from 'moment'
 
-const { user, sequelize } = db
+const { user, sequelize, role, Sequelize } = db
+const Op = Sequelize.Op
 
 async function createUsers(req, res, next) {
   const { firstName, lastName, email, password, roleId } = req.body
@@ -42,21 +44,10 @@ async function createUsers(req, res, next) {
   }
 }
 
-async function getUsers(req, res) {
-  const { limit, offset, isDeleted } = req.query
-  let object = {},
-    where = {}
-  if (isDeleted || isDeleted == false) {
-    where.isDeleted = isDeleted
-    object.where = where
-  }
-  if (limit) object.limit = limit
-  if (offset || offset == 0) object.offset = offset
-  console.log('==================')
-  // console.log(req.session)
-  return
+async function getAllUsers(req, res) {
   try {
-    const records = await user.findAndCountAll()
+    const { isDeleted } = req.query
+    const records = await user.findAll({ where: { isDeleted } })
     return res.success({ data: records })
   } catch (error) {
     return httpError(error.message)
@@ -118,11 +109,55 @@ async function verifyRole(req, res, next) {
   return res.success({ message: 'Email verify Successfully', data: verify })
 }
 
+async function getTouristCount(req, res) {
+  try {
+    const record = await user.count({
+      include: { model: role, where: { title: 'tourist' } }
+    })
+    return res.success({ data: record })
+  } catch (error) {
+    return httpError(error.message)
+  }
+}
+
+async function getAgencyCount(req, res) {
+  try {
+    const record = await user.count({
+      include: { model: role, where: { title: 'agency' } }
+    })
+    return res.success({ data: record })
+  } catch (error) {
+    return httpError(error.message)
+  }
+}
+
+async function getNewJoinTourists(req, res) {
+  try {
+    const record = await user.findAll({
+      limit: 5,
+      order: [['createdAt', 'DESC']],
+      subQuery: false,
+      include: [
+        {
+          model: role,
+          where: { title: 'tourist' }
+        }
+      ]
+    })
+    return res.success({ data: record })
+  } catch (error) {
+    return httpError(error.message)
+  }
+}
+
 export {
   createUsers,
   verifyRole,
-  getUsers,
+  getAllUsers,
   updateUser,
   deleteUser,
-  getUserBYid
+  getUserBYid,
+  getTouristCount,
+  getAgencyCount,
+  getNewJoinTourists
 }

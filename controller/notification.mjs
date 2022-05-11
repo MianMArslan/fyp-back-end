@@ -24,7 +24,8 @@ async function getNotification(req, res, next) {
     const receiverId = req.session.userRecord.userId
     const receiverType = req.session.userRole.title
     let result = await notification.findAndCountAll({
-      where: { receiverType, receiverId, isRead }
+      where: { receiverType, receiverId, isRead },
+      include: { model: user }
     })
     res.success({ data: result })
   } catch (error) {
@@ -41,7 +42,7 @@ async function updateNotificationStatus(req, res, next) {
         where: { id }
       }
     )
-    res.success({ message: true, data: result })
+    res.success({ data: result })
   } catch (error) {
     httpError(error.message)
   }
@@ -50,14 +51,13 @@ async function updateNotificationStatus(req, res, next) {
 async function deleteReadNotification(req, res, next) {
   try {
     const receiverType = req.session.userRole.title
-    const { id } = req.body
-    let result = await notification.update(
-      { isDeleted: true },
-      {
-        where: { receiverType, id }
-      }
-    )
-    if (result) return true
+    const { receiverId } = req.query
+    let where = { isRead: true, receiverType }
+    if (receiverId) where.receiverId = receiverId
+    let result = await notification.destroy({
+      where
+    })
+    if (result) res.success({ message: true, data: true })
   } catch (error) {
     httpError(error.message)
   }
@@ -66,10 +66,6 @@ async function deleteReadNotification(req, res, next) {
 async function getNotificationForAdmin(req, res, next) {
   try {
     const { isRead } = req.query
-    console.log(
-      '🚀 ~ file: notification.mjs ~ line 70 ~ getNotificationForAdmin ~ isRead',
-      isRead
-    )
     const receiverType = req.session.userRole.title
     let result = await notification.findAndCountAll({
       where: { receiverType, isRead },
