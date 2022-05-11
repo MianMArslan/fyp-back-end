@@ -51,7 +51,7 @@ async function authorizeTourist(req, res, next) {
     userData.userRole = { title: userRecord[0].title }
 
     if (userRecord[0].title == 'tourist') {
-      req.session.userSession = userData
+      req.session = userData
       next()
     } else res.fail({ code: 400, error: { message: 'UnAuthorize' } })
   } catch (err) {
