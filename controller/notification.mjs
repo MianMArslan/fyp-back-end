@@ -3,13 +3,20 @@ import { httpError } from '../common/httpError.mjs'
 
 const { notification, user, role } = db
 
-async function createNotification(message, type, receiverType, userId) {
+async function createNotification(
+  message,
+  type,
+  receiverType,
+  receiverId,
+  userId
+) {
   try {
     let result = await notification.create({
       message,
       type,
       receiverType,
       userId,
+      receiverId,
       isRead: false
     })
     if (result) return true

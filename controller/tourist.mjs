@@ -1,21 +1,22 @@
 import db from '../models/index.js'
 import { httpError } from '../common/httpError.mjs'
+import { createNotification } from './notification.mjs'
 
-const { user, role, location, Sequelize, ads } = db
+const { user, role, location, Sequelize, ads, chatRoom } = db
 const Op = Sequelize.Op
 import { distance } from '../common/distance.mjs'
 
 async function getNearestTourist(req, res, next) {
   try {
     let currentUserLocation = await location.findOne({
-      where: { userId: req.session.UserRecord.userId }
+      where: { userId: req.session.userRecord.userId }
     })
     const { latitude, longitude } = currentUserLocation
     let otherUsersLocation = []
     let value = await user.findAll({
       where: {
         isVerified: 'email',
-        id: { [Op.ne]: req.session.UserRecord.userId }
+        id: { [Op.ne]: req.session.userRecord.userId }
       },
       include: [
         { model: role, where: { title: 'tourist' } },
@@ -57,4 +58,38 @@ async function getAds(req, res, next) {
   }
 }
 
-export { getNearestTourist, getAds }
+async function generateRoom(req, res, next) {
+  try {
+    const roomId = Math.floor(Math.random() * 10000000) + 1
+    let record = await chatRoom.findOne({
+      where: { userId: req.session.userRecord.userId }
+    })
+    let value = null
+    if (!record)
+      value = await chatRoom.create({
+        roomId,
+        userId: req.session.userRecord.userId
+      })
+    else value = record
+    res.success({ message: 'Successful', data: value })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
+async function sendNotificationForChat(req, res, next) {
+  try {
+    const { id } = req.body
+    let value = createNotification(
+      'Chat Request',
+      'message',
+      'tourist',
+      id,
+      req.session.userRecord.userId
+    )
+    if (value) res.success({ message: 'Request Send Successful', data: value })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+export { getNearestTourist, getAds, generateRoom, sendNotificationForChat }

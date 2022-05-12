@@ -14,7 +14,13 @@ module.exports = (sequelize, DataTypes) => {
   notification.init(
     {
       message: DataTypes.STRING,
-      type: DataTypes.ENUM('newUser', 'adsCreate', 'booking', 'documents'),
+      type: DataTypes.ENUM(
+        'newUser',
+        'adsCreate',
+        'booking',
+        'documents',
+        'message'
+      ),
       receiverType: DataTypes.ENUM('admin', 'agency', 'tourist'),
       userId: DataTypes.INTEGER,
       receiverId: DataTypes.INTEGER,

@@ -1,36 +1,18 @@
 'use strict'
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('notifications', {
+    await queryInterface.createTable('chatRooms', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      message: {
-        type: Sequelize.STRING
-      },
-      type: {
-        type: Sequelize.ENUM(
-          'newUser',
-          'adsCreate',
-          'booking',
-          'documents',
-          'message'
-        )
-      },
-      receiverType: {
-        type: Sequelize.ENUM('admin', 'agency', 'tourist')
-      },
       userId: {
         type: Sequelize.INTEGER
       },
-      receiverId: {
+      roomId: {
         type: Sequelize.INTEGER
-      },
-      isRead: {
-        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,
@@ -43,6 +25,6 @@ module.exports = {
     })
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('notifications')
+    await queryInterface.dropTable('chatRooms')
   }
 }
