@@ -1,10 +1,10 @@
 import db from '../models/index.js'
 import { httpError } from '../common/httpError.mjs'
 import { createNotification } from './notification.mjs'
-
-const { user, role, location, Sequelize, ads, chatRoom } = db
-const Op = Sequelize.Op
 import { distance } from '../common/distance.mjs'
+
+const { user, role, location, Sequelize, ads, chatRoom, chatConnection } = db
+const Op = Sequelize.Op
 
 async function getNearestTourist(req, res, next) {
   try {
@@ -92,4 +92,65 @@ async function sendNotificationForChat(req, res, next) {
     httpError(error.message)
   }
 }
-export { getNearestTourist, getAds, generateRoom, sendNotificationForChat }
+
+async function sendChatRequest(req, res, next) {
+  try {
+    const { receiverId, roomId } = req.body
+    const { userId } = req.session.userRecord
+    let value = await chatConnection.findOne({
+      where: { receiverId, roomId, senderId: userId, status: 'pending' }
+    })
+    if (value) {
+      res.success({ data: record })
+    } else {
+      let record = await chatConnection.create({
+        senderId: userId,
+        receiverId,
+        status: 'pending',
+        roomId
+      })
+      if (record) res.success({ data: record })
+    }
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
+async function checkChatRequest(req, res, next) {
+  try {
+    const { userId } = req.session.userRecord
+    let value = await chatConnection.findOne({
+      where: { receiverId: userId, status: 'pending' }
+    })
+    if (value) res.success({ data: value })
+    else res.success({ data: null })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
+async function closeChat(req, res, next) {
+  try {
+    const { userId } = req.session.userRecord
+    console.log(req.session.userRecord)
+    console.log(userId)
+    let value = await chatConnection.update(
+      { status: 'completed' },
+      {
+        where: { [Op.or]: [{ senderId: userId }, { receiverId: userId }] }
+      }
+    )
+    if (value) res.success({ data: value })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+export {
+  getNearestTourist,
+  getAds,
+  generateRoom,
+  sendNotificationForChat,
+  sendChatRequest,
+  checkChatRequest,
+  closeChat
+}
