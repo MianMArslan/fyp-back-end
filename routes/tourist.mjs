@@ -22,6 +22,8 @@ import {
   validateDeleteNotification
 } from '../middleware/notification.mjs'
 import { getUserBYid } from '../controller/users.mjs'
+import { changePassword } from '../common/changePassword.mjs'
+import { validateChangePassword } from '../middleware/tourist.mjs'
 
 router.get('/', authorizeTourist, getNearestTourist)
 router.get('/ads', authorizeTourist, getAds)
@@ -37,6 +39,12 @@ router.put(
   authorizeTourist,
   validateUpdateNotificationStatus,
   updateNotificationStatus
+)
+router.put(
+  '/changePassword',
+  authorizeTourist,
+  validateChangePassword,
+  changePassword
 )
 router.delete(
   '/notification',
