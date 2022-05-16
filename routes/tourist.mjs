@@ -11,7 +11,16 @@ import {
   closeChat
 } from '../controller/tourist.mjs'
 import { authorizeTourist } from '../middleware/token.mjs'
-import { getNotification } from '../controller/notification.mjs'
+import {
+  getNotification,
+  deleteReadNotification,
+  updateNotificationStatus
+} from '../controller/notification.mjs'
+import {
+  validateGetNotification,
+  validateUpdateNotificationStatus,
+  validateDeleteNotification
+} from '../middleware/notification.mjs'
 import { getUserBYid } from '../controller/users.mjs'
 
 router.get('/', authorizeTourist, getNearestTourist)
@@ -23,5 +32,16 @@ router.post('/generateRoom', authorizeTourist, generateRoom)
 router.post('/chatNotification', authorizeTourist, sendNotificationForChat)
 router.post('/chatRoom', authorizeTourist, sendChatRequest)
 router.post('/chatRoomClose', authorizeTourist, closeChat)
-
+router.put(
+  '/notification',
+  authorizeTourist,
+  validateUpdateNotificationStatus,
+  updateNotificationStatus
+)
+router.delete(
+  '/notification',
+  authorizeTourist,
+  validateDeleteNotification,
+  deleteReadNotification
+)
 export default router
