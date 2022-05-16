@@ -79,8 +79,9 @@ let port
       socket.to(data.room).emit('receive_message', data)
     })
 
-    socket.on('disconnect', () => {
+    socket.on('close', () => {
       console.log('User Disconnected', socket.id)
+      socket.disconnect()
     })
   })
   /**

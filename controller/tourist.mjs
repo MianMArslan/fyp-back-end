@@ -120,7 +120,10 @@ async function checkChatRequest(req, res, next) {
   try {
     const { userId } = req.session.userRecord
     let value = await chatConnection.findOne({
-      where: { receiverId: userId, status: 'pending' }
+      where: {
+        [Op.or]: [{ senderId: userId }, { receiverId: userId }],
+        status: 'pending'
+      }
     })
     if (value) res.success({ data: value })
     else res.success({ data: null })
@@ -132,8 +135,6 @@ async function checkChatRequest(req, res, next) {
 async function closeChat(req, res, next) {
   try {
     const { userId } = req.session.userRecord
-    console.log(req.session.userRecord)
-    console.log(userId)
     let value = await chatConnection.update(
       { status: 'completed' },
       {
