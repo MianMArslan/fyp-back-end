@@ -32,7 +32,8 @@ async function getNotification(req, res, next) {
     const receiverType = req.session.userRole.title
     let result = await notification.findAndCountAll({
       where: { receiverType, receiverId, isRead },
-      include: { model: user }
+      include: { model: user },
+      order: [['createdAt', 'DESC']]
     })
     res.success({ data: result })
   } catch (error) {
