@@ -5,7 +5,10 @@ import {
   markUnActive,
   deleteAds,
   updateAd,
-  getCount
+  getCount,
+  getBookingCount,
+  getBooking,
+  updateBookingStatus
 } from '../controller/agency/ads.mjs'
 import { verificationImage } from '../middleware/uploader.mjs'
 import { pinataUpload } from '../middleware/pinata.mjs'
@@ -42,6 +45,9 @@ router.post(
 router.post('/changePassword', authorizeAgency, changePassword)
 router.get('/', authorizeAgency, getAds)
 router.get('/count', authorizeAgency, getCount)
+router.get('/orderCount', authorizeAgency, getBookingCount)
+router.get('/orders', authorizeAgency, getBooking)
+router.post('/orderStatus', authorizeAgency, updateBookingStatus)
 router.put('/active', authorizeAgency, validateMarkUnActive, markUnActive)
 router.put('/', authorizeAgency, validateUpdateAd, updateAd)
 router.get(

@@ -182,8 +182,8 @@ async function CreateBooking(req, res, next) {
       'booking Request',
       'booking',
       'agency',
-      userId,
-      adOwnerId
+      adOwnerId,
+      userId
     )
     if (record && value)
       res.success({ message: 'Booking Request Send', data: record })
