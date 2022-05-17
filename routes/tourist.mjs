@@ -8,7 +8,10 @@ import {
   sendNotificationForChat,
   sendChatRequest,
   checkChatRequest,
-  closeChat
+  closeChat,
+  CreateBooking,
+  GetBooking,
+  getDiscountedAds
 } from '../controller/tourist.mjs'
 import { authorizeTourist } from '../middleware/token.mjs'
 import {
@@ -23,17 +26,28 @@ import {
 } from '../middleware/notification.mjs'
 import { getUserBYid } from '../controller/users.mjs'
 import { changePassword } from '../common/changePassword.mjs'
-import { validateChangePassword } from '../middleware/tourist.mjs'
+import {
+  validateChangePassword,
+  validateCreateBooking
+} from '../middleware/tourist.mjs'
 
 router.get('/', authorizeTourist, getNearestTourist)
 router.get('/ads', authorizeTourist, getAds)
 router.get('/id', authorizeTourist, getUserBYid)
 router.get('/notification', authorizeTourist, getNotification)
 router.get('/chatRequest', authorizeTourist, checkChatRequest)
+router.get('/booking', authorizeTourist, GetBooking)
+router.get('/discountedAds', authorizeTourist, getDiscountedAds)
 router.post('/generateRoom', authorizeTourist, generateRoom)
 router.post('/chatNotification', authorizeTourist, sendNotificationForChat)
 router.post('/chatRoom', authorizeTourist, sendChatRequest)
 router.post('/chatRoomClose', authorizeTourist, closeChat)
+router.post(
+  '/createBooking',
+  authorizeTourist,
+  validateCreateBooking,
+  CreateBooking
+)
 router.put(
   '/notification',
   authorizeTourist,

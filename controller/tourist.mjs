@@ -3,7 +3,16 @@ import { httpError } from '../common/httpError.mjs'
 import { createNotification } from './notification.mjs'
 import { distance } from '../common/distance.mjs'
 
-const { user, role, location, Sequelize, ads, chatRoom, chatConnection } = db
+const {
+  user,
+  role,
+  location,
+  Sequelize,
+  ads,
+  chatRoom,
+  chatConnection,
+  Booking
+} = db
 const Op = Sequelize.Op
 
 async function getNearestTourist(req, res, next) {
@@ -146,6 +155,66 @@ async function closeChat(req, res, next) {
     httpError(error.message)
   }
 }
+
+async function CreateBooking(req, res, next) {
+  try {
+    const { userId } = req.session.userRecord
+    const { adId, name, description, phone, adOwnerId } = req.body
+    let checking = await Booking.findOne({
+      where: { userId, adId, status: 'pending' }
+    })
+    if (checking)
+      res.fail({
+        error: {
+          message:
+            'Your Booking Request for this ad is already in pending state.'
+        }
+      })
+    let record = await Booking.create({
+      userId,
+      adId,
+      description,
+      name,
+      phone,
+      status: 'pending'
+    })
+    let value = createNotification(
+      'booking Request',
+      'booking',
+      'agency',
+      userId,
+      adOwnerId
+    )
+    if (record && value)
+      res.success({ message: 'Booking Request Send', data: record })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
+async function GetBooking(req, res) {
+  try {
+    const { userId } = req.session.userRecord
+    let value = await Booking.findAll({
+      where: { userId },
+      include: [{ model: ads }]
+    })
+    if (value) res.success({ data: value })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
+async function getDiscountedAds(req, res, next) {
+  try {
+    let record = await ads.findAll({
+      where: { isDeleted: false, discount: { [Op.gt]: 1 } }
+    })
+    res.success({ message: 'Successful', data: record })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
 export {
   getNearestTourist,
   getAds,
@@ -153,5 +222,8 @@ export {
   sendNotificationForChat,
   sendChatRequest,
   checkChatRequest,
-  closeChat
+  closeChat,
+  CreateBooking,
+  GetBooking,
+  getDiscountedAds
 }
