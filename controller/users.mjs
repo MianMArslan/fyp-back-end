@@ -47,7 +47,10 @@ async function createUsers(req, res, next) {
 async function getAllUsers(req, res) {
   try {
     const { isDeleted } = req.query
-    const records = await user.findAll({ where: { isDeleted } })
+    const records = await user.findAll({
+      where: { isDeleted },
+      include: { model: role, where: { title: 'tourist' } }
+    })
     return res.success({ data: records })
   } catch (error) {
     return httpError(error.message)
@@ -150,6 +153,19 @@ async function getNewJoinTourists(req, res) {
   }
 }
 
+async function getAllAgencies(req, res) {
+  try {
+    const { isDeleted } = req.query
+    const records = await user.findAll({
+      where: { isDeleted },
+      include: { model: role, where: { title: 'agency' } }
+    })
+    return res.success({ data: records })
+  } catch (error) {
+    return httpError(error.message)
+  }
+}
+
 export {
   createUsers,
   verifyRole,
@@ -159,5 +175,6 @@ export {
   getUserBYid,
   getTouristCount,
   getAgencyCount,
-  getNewJoinTourists
+  getNewJoinTourists,
+  getAllAgencies
 }
