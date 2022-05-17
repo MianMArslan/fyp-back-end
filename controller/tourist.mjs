@@ -208,7 +208,23 @@ async function GetBooking(req, res) {
 async function getDiscountedAds(req, res, next) {
   try {
     let record = await ads.findAll({
-      where: { isDeleted: false, discount: { [Op.gt]: 1 } }
+      where: { isDeleted: false, active: true, discount: { [Op.gt]: 1 } }
+    })
+    res.success({ message: 'Successful', data: record })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
+async function getRecommendedAds(req, res, next) {
+  try {
+    let where = { isDeleted: false, active: true }
+    const { interest } = req.session.userRecord
+    if (interest != 'Others') where.destination = interest
+    let record = await ads.findAll({
+      where,
+      limit: 4,
+      order: [['createdAt', 'DESC']]
     })
     res.success({ message: 'Successful', data: record })
   } catch (error) {
@@ -225,5 +241,6 @@ export {
   closeChat,
   CreateBooking,
   GetBooking,
-  getDiscountedAds
+  getDiscountedAds,
+  getRecommendedAds
 }

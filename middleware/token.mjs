@@ -45,7 +45,8 @@ async function authorizeTourist(req, res, next) {
       userId: record.id,
       firstName: record.firstName,
       lastName: record.lastName,
-      email: record.email
+      email: record.email,
+      interest: record.interest
     }
     const userRecord = await record.getRoles()
     userData.userRole = { title: userRecord[0].title }

@@ -11,7 +11,8 @@ import {
   closeChat,
   CreateBooking,
   GetBooking,
-  getDiscountedAds
+  getDiscountedAds,
+  getRecommendedAds
 } from '../controller/tourist.mjs'
 import { authorizeTourist } from '../middleware/token.mjs'
 import {
@@ -38,6 +39,7 @@ router.get('/notification', authorizeTourist, getNotification)
 router.get('/chatRequest', authorizeTourist, checkChatRequest)
 router.get('/booking', authorizeTourist, GetBooking)
 router.get('/discountedAds', authorizeTourist, getDiscountedAds)
+router.get('/recommendedAds', authorizeTourist, getRecommendedAds)
 router.post('/generateRoom', authorizeTourist, generateRoom)
 router.post('/chatNotification', authorizeTourist, sendNotificationForChat)
 router.post('/chatRoom', authorizeTourist, sendChatRequest)
