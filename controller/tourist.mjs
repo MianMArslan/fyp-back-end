@@ -11,7 +11,8 @@ const {
   ads,
   chatRoom,
   chatConnection,
-  Booking
+  Booking,
+  adsReview
 } = db
 const Op = Sequelize.Op
 
@@ -164,7 +165,7 @@ async function CreateBooking(req, res, next) {
       where: { userId, adId, status: 'pending' }
     })
     if (checking)
-      res.fail({
+      return res.fail({
         error: {
           message:
             'Your Booking Request for this ad is already in pending state.'
@@ -197,7 +198,7 @@ async function GetBooking(req, res) {
     const { userId } = req.session.userRecord
     let value = await Booking.findAll({
       where: { userId },
-      include: [{ model: ads }]
+      include: [{ model: ads, include: [{ model: adsReview }] }]
     })
     if (value) res.success({ data: value })
   } catch (error) {
@@ -231,6 +232,37 @@ async function getRecommendedAds(req, res, next) {
     httpError(error.message)
   }
 }
+
+async function createReview(req, res) {
+  try {
+    const { userId } = req.session.userRecord
+    const { adId, review, adOwnerId } = req.body
+    let checking = await adsReview.findOne({ where: { userId, addId: adId } })
+    if (checking)
+      return res.fail({
+        error: {
+          message: 'Already reviewed.'
+        }
+      })
+    let record = await adsReview.create({
+      userId,
+      addId: adId,
+      rating: review
+    })
+    await createNotification(
+      'Submit Review',
+      'booking',
+      'agency',
+      adOwnerId,
+      userId
+    )
+    res.success({ message: 'Successful', data: record })
+    return
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
 export {
   getNearestTourist,
   getAds,
@@ -242,5 +274,6 @@ export {
   CreateBooking,
   GetBooking,
   getDiscountedAds,
-  getRecommendedAds
+  getRecommendedAds,
+  createReview
 }

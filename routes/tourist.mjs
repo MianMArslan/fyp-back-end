@@ -12,7 +12,8 @@ import {
   CreateBooking,
   GetBooking,
   getDiscountedAds,
-  getRecommendedAds
+  getRecommendedAds,
+  createReview
 } from '../controller/tourist.mjs'
 import { authorizeTourist } from '../middleware/token.mjs'
 import {
@@ -50,6 +51,7 @@ router.post(
   validateCreateBooking,
   CreateBooking
 )
+router.post('/review', authorizeTourist, createReview)
 router.put(
   '/notification',
   authorizeTourist,
