@@ -1,7 +1,7 @@
 import db from '../../models/index.js'
 import { httpError } from '../../common/httpError.mjs'
 import { createNotification } from '../notification.mjs'
-const { ads, Sequelize, user, role, Booking } = db
+const { ads, Sequelize, user, role, Booking, adsReview } = db
 const Op = Sequelize.Op
 
 async function createAd(req, res, next) {
@@ -141,7 +141,17 @@ async function getBooking(req, res) {
   try {
     const { userId } = req.session.userRecord
     let pending = await Booking.findAll({
-      include: [{ model: ads, where: { userId } }]
+      include: [
+        {
+          model: ads,
+          where: { userId },
+          include: [
+            {
+              model: adsReview
+            }
+          ]
+        }
+      ]
     })
     res.success({ message: 'Successful', data: pending })
   } catch (error) {
