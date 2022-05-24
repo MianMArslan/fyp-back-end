@@ -15,7 +15,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       phone: {
-        type: Sequelize.INTEGER
+        type: Sequelize.DOUBLE
       },
       name: {
         type: Sequelize.STRING

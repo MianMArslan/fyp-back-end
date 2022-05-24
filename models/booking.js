@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       userId: DataTypes.INTEGER,
       adId: DataTypes.INTEGER,
-      phone: DataTypes.INTEGER,
+      phone: DataTypes.DOUBLE,
       name: DataTypes.STRING,
       status: DataTypes.ENUM('pending', 'accept', 'reject'),
       description: DataTypes.STRING
