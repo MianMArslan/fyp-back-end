@@ -61,7 +61,9 @@ async function getNearestTourist(req, res, next) {
 
 async function getAds(req, res, next) {
   try {
-    let record = await ads.findAll({ where: { isDeleted: false } })
+    let record = await ads.findAll({
+      where: { isDeleted: false, active: true }
+    })
     res.success({ message: 'Successful', data: record })
   } catch (error) {
     httpError(error.message)
