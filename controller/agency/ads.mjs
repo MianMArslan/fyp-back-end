@@ -144,12 +144,7 @@ async function getBooking(req, res) {
       include: [
         {
           model: ads,
-          where: { userId },
-          include: [
-            {
-              model: adsReview
-            }
-          ]
+          where: { userId }
         }
       ]
     })

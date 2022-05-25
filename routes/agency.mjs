@@ -31,7 +31,7 @@ import {
   validateDeleteNotification
 } from '../middleware/notification.mjs'
 import { getUserBYid } from '../controller/users.mjs'
-import { getReview } from '../controller/review.mjs'
+import { getReview, getReviewByID } from '../controller/review.mjs'
 
 const router = express.Router()
 
@@ -58,6 +58,7 @@ router.get(
   getNotification
 )
 router.get('/review', authorizeAgency, getReview)
+router.get('/review/id', authorizeAgency, getReviewByID)
 router.get('/id', authorizeAgency, getUserBYid)
 
 router.put(

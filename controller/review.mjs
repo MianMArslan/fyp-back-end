@@ -17,4 +17,16 @@ async function getReview(req, res, next) {
   }
 }
 
-export { getReview }
+async function getReviewByID(req, res, next) {
+  try {
+    const { adId, userId } = req.query
+    let result = await adsReview.findOne({
+      where: { addId: adId, userId }
+    })
+    res.success({ data: result })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
+export { getReview, getReviewByID }
