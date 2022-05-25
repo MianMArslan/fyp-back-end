@@ -17,9 +17,17 @@ async function createContactUsForAll(req, res, next) {
 async function createContactUsForTourist(req, res, next) {
   try {
     //get from session
+    const { email, firstName, lastName } = req.session.userRecord
     let { suggestion } = req.body
-    let result = await contactUs.create({ name, email, suggestion })
-    res.success({ data: result })
+    let result = await contactUs.create({
+      name: `${firstName} ${lastName}`,
+      email,
+      suggestion
+    })
+    res.success({
+      data: result,
+      message: 'Suggestion is submitted Successfully!'
+    })
   } catch (error) {
     httpError(error.message)
   }
