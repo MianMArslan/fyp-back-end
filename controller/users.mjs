@@ -68,34 +68,31 @@ async function getUserBYid(req, res) {
 }
 
 async function updateUser(req, res) {
-  const { id, firstName, lastName, roleIds } = req.body
-  let object = {},
-    where = {}
-  if (firstName) object.firstName = firstName
-  if (lastName) object.lastName = lastName
-  where.id = id
-  if (object) {
-    try {
-      await user.update(object, { where })
-      return res.status(200).success({
-        status: users.status,
-        message: users.userUpdated,
-        data: users.data
-      })
-    } catch (error) {
-      return httpError(error)
-    }
+  try {
+    const { id, firstName, lastName, roleIds } = req.body
+    let object = {},
+      where = {}
+    if (firstName) object.firstName = firstName
+    if (lastName) object.lastName = lastName
+    where.id = id
+    let record = await user.update(object, { where })
+    return res.success({
+      status: users.status,
+      message: users.userUpdated,
+      data: record
+    })
+  } catch (error) {
+    return httpError(error)
   }
 }
 
 async function deleteUser(req, res) {
-  const { id } = req.body
   try {
-    await user.update({ isDeleted: true }, { where: { id } })
+    const { id } = req.query
+    let value = await user.update({ isDeleted: true }, { where: { id } })
     return res.success({
-      status: 202,
       message: 'User Deleted Successfully!',
-      data: null
+      data: value
     })
   } catch (error) {
     return res.fail({ error })

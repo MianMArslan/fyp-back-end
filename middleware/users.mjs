@@ -55,8 +55,7 @@ function updateValidation(req, res, next) {
   const schema = Joi.object({
     firstName: Joi.string(),
     lastName: Joi.string(),
-    id: Joi.number().integer().positive().required(),
-    roleIds: Joi.array()
+    id: Joi.number().integer().positive().required()
   })
   const { error } = schema.validate(req.body)
   if (error) return res.fail({ error })

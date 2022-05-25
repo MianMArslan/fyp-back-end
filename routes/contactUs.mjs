@@ -8,7 +8,7 @@ import {
 } from '../controller/contactUs.mjs'
 import { authorizeTourist } from '../middleware/token.mjs'
 
-router.post('/', validateForAll, createContactUsForAll)
+router.post('/all', validateForAll, createContactUsForAll)
 router.post(
   '/tourist',
   authorizeTourist,
