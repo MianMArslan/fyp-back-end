@@ -12,7 +12,7 @@ async function getReview(req, res, next) {
       include: [{ model: user }]
     })
     let avg = 0
-    Promise.all(result.rows.map((row) => (avg += row.rating)))
+    await Promise.all(result.rows.map((row) => (avg += row.rating)))
     result.avg = avg
     res.success({ data: result })
   } catch (error) {
