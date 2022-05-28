@@ -43,7 +43,7 @@ async function createContactUsForTourist(req, res, next) {
 
 async function getContactUs(req, res, next) {
   try {
-    let result = await contactUs.findAll()
+    let result = await contactUs.findAll({ order: [['createdAt', 'DESC']] })
     res.success({
       data: result
     })

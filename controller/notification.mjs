@@ -76,6 +76,7 @@ async function getNotificationForAdmin(req, res, next) {
     const { isRead } = req.query
     const receiverType = req.session.userRole.title
     let result = await notification.findAndCountAll({
+      order: [['createdAt', 'DESC']],
       where: { receiverType, isRead },
       include: { model: user, include: { model: role } }
     })

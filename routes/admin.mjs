@@ -20,6 +20,7 @@ import { getAllBooking } from '../controller/booking.mjs'
 import { getAllAgencies } from '../controller/users.mjs'
 import { getContactUs } from '../controller/contactUs.mjs'
 import { updateValidation } from '../middleware/users.mjs'
+import { getLocationLog } from '../controller/locationLog.mjs'
 
 const router = express.Router()
 router.get(
@@ -29,6 +30,7 @@ router.get(
   getNotificationForAdmin
 )
 router.get('/contactUs', authorizeAdmin, getContactUs)
+router.get('/locationLog', authorizeAdmin, getLocationLog)
 router.put(
   '/notification',
   authorizeAdmin,
