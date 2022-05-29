@@ -41,17 +41,18 @@ async function authorizeTourist(req, res, next) {
     jwt.verify(accessToken, process.env.SECRET)
     const decode = jwt_decode(accessToken)
     const record = await user.findOne({ where: { email: decode.email } })
-    userData.UserRecord = {
+    userData.userRecord = {
       userId: record.id,
       firstName: record.firstName,
       lastName: record.lastName,
-      email: record.email
+      email: record.email,
+      interest: record.interest
     }
     const userRecord = await record.getRoles()
     userData.userRole = { title: userRecord[0].title }
 
     if (userRecord[0].title == 'tourist') {
-      req.session.userSession = userData
+      req.session = userData
       next()
     } else res.fail({ code: 400, error: { message: 'UnAuthorize' } })
   } catch (err) {
@@ -67,7 +68,7 @@ async function authorizeAdmin(req, res, next) {
     jwt.verify(accessToken, process.env.SECRET)
     const decode = jwt_decode(accessToken)
     const record = await user.findOne({ where: { email: decode.email } })
-    userData.UserRecord = {
+    userData.userRecord = {
       userId: record.id,
       firstName: record.firstName,
       lastName: record.lastName,

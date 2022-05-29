@@ -1,36 +1,30 @@
 'use strict'
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('notifications', {
+    await queryInterface.createTable('Bookings', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      message: {
-        type: Sequelize.STRING
-      },
-      type: {
-        type: Sequelize.ENUM(
-          'newUser',
-          'adsCreate',
-          'booking',
-          'documents',
-          'message'
-        )
-      },
-      receiverType: {
-        type: Sequelize.ENUM('admin', 'agency', 'tourist')
-      },
       userId: {
         type: Sequelize.INTEGER
       },
-      receiverId: {
+      adId: {
         type: Sequelize.INTEGER
       },
-      isRead: {
-        type: Sequelize.BOOLEAN
+      phone: {
+        type: Sequelize.DOUBLE
+      },
+      name: {
+        type: Sequelize.STRING
+      },
+      status: {
+        type: Sequelize.ENUM('pending', 'accept', 'reject')
+      },
+      description: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -43,6 +37,6 @@ module.exports = {
     })
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('notifications')
+    await queryInterface.dropTable('Bookings')
   }
 }

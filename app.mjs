@@ -13,6 +13,8 @@ import { JSend } from 'jsend-express'
 import 'express-async-errors'
 import error from './middleware/error.mjs'
 import setRoutes from './routes/index.mjs'
+import http from 'http'
+import { Server } from 'socket.io'
 
 const app = express()
 const jSend = new JSend({ name: 'appName', version: 'X.X.X', release: 'XX' })
@@ -24,7 +26,8 @@ const corsOptions = {
   origin: [
     'http://localhost:3000',
     'http://localhost:3001',
-    'http://localhost:3002'
+    'http://localhost:3002',
+    'http://localhost:3003'
   ]
 }
 app.use(logger('dev'))
@@ -36,6 +39,8 @@ app.use(helmet())
 app.use(cors(corsOptions))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(jSend.middleware.bind(jSend))
+
+// const server = http.createServer(app)
 
 setRoutes(app)
 

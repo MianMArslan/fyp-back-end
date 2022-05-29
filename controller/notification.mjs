@@ -3,13 +3,20 @@ import { httpError } from '../common/httpError.mjs'
 
 const { notification, user, role } = db
 
-async function createNotification(message, type, receiverType, userId) {
+async function createNotification(
+  message,
+  type,
+  receiverType,
+  receiverId,
+  userId
+) {
   try {
     let result = await notification.create({
       message,
       type,
       receiverType,
       userId,
+      receiverId,
       isRead: false
     })
     if (result) return true
@@ -25,7 +32,8 @@ async function getNotification(req, res, next) {
     const receiverType = req.session.userRole.title
     let result = await notification.findAndCountAll({
       where: { receiverType, receiverId, isRead },
-      include: { model: user }
+      include: { model: user },
+      order: [['createdAt', 'DESC']]
     })
     res.success({ data: result })
   } catch (error) {
@@ -68,6 +76,7 @@ async function getNotificationForAdmin(req, res, next) {
     const { isRead } = req.query
     const receiverType = req.session.userRole.title
     let result = await notification.findAndCountAll({
+      order: [['createdAt', 'DESC']],
       where: { receiverType, isRead },
       include: { model: user, include: { model: role } }
     })

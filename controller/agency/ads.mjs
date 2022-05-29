@@ -1,7 +1,7 @@
 import db from '../../models/index.js'
 import { httpError } from '../../common/httpError.mjs'
 import { createNotification } from '../notification.mjs'
-const { ads, Sequelize, user, role } = db
+const { ads, Sequelize, user, role, Booking, adsReview } = db
 const Op = Sequelize.Op
 
 async function createAd(req, res, next) {
@@ -121,7 +121,55 @@ async function getNewAds(req, res) {
     return httpError(error.message)
   }
 }
+async function getBookingCount(req, res) {
+  try {
+    const { userId } = req.session.userRecord
+    let pending = await Booking.count({
+      where: { status: 'pending' },
+      include: [{ model: ads, where: { userId } }]
+    })
+    let all = await Booking.count({
+      include: [{ model: ads, where: { userId } }]
+    })
+    res.success({ message: 'Successful', data: [pending, all] })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
 
+async function getBooking(req, res) {
+  try {
+    const { userId } = req.session.userRecord
+    let pending = await Booking.findAll({
+      include: [
+        {
+          model: ads,
+          where: { userId }
+        }
+      ]
+    })
+    res.success({ message: 'Successful', data: pending })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
+async function updateBookingStatus(req, res) {
+  try {
+    const { status, userId, id } = req.body
+    let value = await Booking.update({ status }, { where: { id } })
+    await createNotification(
+      `Booking Request ${status}`,
+      'booking',
+      'tourist',
+      userId,
+      req?.session?.userRecord?.userId
+    )
+    res.success({ message: 'Successfully Update', data: value })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
 export {
   createAd,
   getAds,
@@ -129,5 +177,8 @@ export {
   deleteAds,
   updateAd,
   getCount,
-  getNewAds
+  getNewAds,
+  getBookingCount,
+  getBooking,
+  updateBookingStatus
 }

@@ -189,5 +189,13 @@ async function resendEmailLink(req, res, next) {
     return httpError(auth.messageForgotPassword)
   }
 }
+async function logout(res) {
+  const cookieConfiguration = {}
+  cookieConfiguration.httpOnly = true
+  cookieConfiguration.secure = false
+  cookieConfiguration.SameSite = 'none'
+  cookieConfiguration.path = '/'
 
+  res.clearCookie('accessToken', cookieConfiguration)
+}
 export { registration, login, forgotPassword, resetPassword, resendEmailLink }
