@@ -265,6 +265,18 @@ async function createReview(req, res) {
   }
 }
 
+async function getSearch(req, res) {
+  try {
+    const { destination } = req.query
+    let record = await ads.findAll({
+      where: { isDeleted: false, active: true, destination }
+    })
+    res.success({ message: 'Successful', data: record })
+  } catch (error) {
+    httpError(error.message)
+  }
+}
+
 export {
   getNearestTourist,
   getAds,
@@ -277,5 +289,6 @@ export {
   GetBooking,
   getDiscountedAds,
   getRecommendedAds,
-  createReview
+  createReview,
+  getSearch
 }
