@@ -25,7 +25,7 @@ const corsOptions = {
   credentials: true,
   origin: [
     'http://localhost:3000',
-    'http://localhost:3001',
+    'http://admin.vtechserve.com',
     'http://localhost:3002',
     'http://localhost:3003'
   ]
