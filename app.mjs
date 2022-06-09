@@ -25,9 +25,12 @@ const corsOptions = {
   credentials: true,
   origin: [
     'http://localhost:3000',
-    'http://admin.vtechserve.com',
+    'http://localhost:3001',
     'http://localhost:3002',
-    'http://localhost:3003'
+    'http://localhost:3003',
+    'http://admin.vtechserve.com',
+    'http://tourist.vtechserve.com',
+    'http://agency.vtechserve.com'
   ]
 }
 app.use(logger('dev'))
