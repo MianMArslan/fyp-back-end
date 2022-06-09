@@ -28,10 +28,10 @@ const corsOptions = {
     'http://localhost:3001',
     'http://localhost:3002',
     'http://localhost:3003',
-    'https://vtechserve.com',
-    'https://admin.vtechserve.com',
-    'https://tourist.vtechserve.com',
-    'https://agency.vtechserve.com'
+    'https://vtechserve.com/',
+    'https://admin.vtechserve.com/',
+    'https://tourist.vtechserve.com/',
+    'https://agency.vtechserve.com/'
   ]
 }
 app.use(logger('dev'))
