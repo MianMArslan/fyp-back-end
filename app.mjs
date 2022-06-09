@@ -28,6 +28,7 @@ const corsOptions = {
     'http://localhost:3001',
     'http://localhost:3002',
     'http://localhost:3003',
+    'http://vtechserve.com',
     'https://vtechserve.com',
     'https://admin.vtechserve.com',
     'https://tourist.vtechserve.com',
